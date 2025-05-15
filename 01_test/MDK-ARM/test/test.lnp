@@ -10,6 +10,7 @@
 "test\usart.o"
 "test\stm32f1xx_it.o"
 "test\stm32f1xx_hal_msp.o"
+"test\light_task.o"
 "test\stm32f1xx_hal_gpio_ex.o"
 "test\stm32f1xx_hal_adc.o"
 "test\stm32f1xx_hal_adc_ex.o"

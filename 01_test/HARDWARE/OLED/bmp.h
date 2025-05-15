@@ -214,16 +214,16 @@ const unsigned char* BAT_LEVELS[] = {
     BAT_60,
     BAT_80,
     BAT_100,
-		BAT_C
+	BAT_C
 };
 
 const unsigned char* FAN_FRAMES[] = {
     FAN0,
     FAN15,
     FAN30,
-		FAN45,
-		FAN60,
-		FAN75,
+	FAN45,
+	FAN60,
+	FAN75,
 };
 
 

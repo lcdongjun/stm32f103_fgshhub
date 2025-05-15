@@ -28,6 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "light_task.h"
 #include "oled.h"
 #include "bmp.h"
 /* USER CODE END Includes */
@@ -35,6 +36,10 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 #define FRAME_TARGET_MS 16  
+
+uint16_t fan_cont = 0, bat_lev_cont = 0 , temp = 0, fan_lev = 0;
+uint32_t start_time = 0, elapsed_time = 0;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -63,27 +68,115 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode);
 void OLED_ShowEncoderValue(void);
-
+void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx);
 uint8_t BMP3_rotated[72];
 u32 timer_seconds = 0 , timer_seconds_cont = 0;
 
-void OLED_ShowFPS(void)
-{
-    static uint32_t lastTick = 0;
-    static uint32_t frameCount = 0;
-    static uint32_t fps = 0;
 
-    frameCount++;
+void ShowRunTime_Task(void *arg){
+  static  uint32_t time_ = 0, cont = 0;
+  time_+=elapsed_time;
+  cont++;
+  if (cont ==100)
+  {
+    cont = 0;
+    time_/=7200;
+    OLED_ShowString(86, 48, "T:", 12, 1);
+    OLED_ShowNum(98, 48, time_, 4, 12, 1);
+    time_ = 0;
+  }
+}
 
-    if (HAL_GetTick() - lastTick >= 1000) // 1ç§’è¿‡å»äº†
-    {
-        fps = frameCount;
-        frameCount = 0;
-        lastTick = HAL_GetTick();
+void ShowTime_Task(void *arg){
+  timer_seconds++;
+  if(timer_seconds>=5999)
+    timer_seconds = 0;
+  OLED_ShowTimer(10, 40, timer_seconds, 16, 1);
+}
 
-        OLED_ShowString(0, 0, "FPS:", 12, 1);  // æ˜¾ç¤ºå‰ç¼€
-        OLED_ShowNum(24, 0, fps, 3, 12, 1);       // æ˜¾ç¤ºFPSå€¼
+void ShowBATLev_Task(void *arg){
+  bat_lev_cont++;
+  bat_lev_cont%=7;
+  OLED_ShowPicture(96,0,32,16,BAT_LEVELS[bat_lev_cont],1);
+}
+
+void ShowTEMP_Task(void *arg){
+  temp++;
+  temp%=60;
+  OLED_ShowPicture(42,3,16,16,TEMP_ICO,1);
+  OLED_ShowNum(56,2,temp,2,16,1);
+  OLED_ShowPicture(72,4,12,12,TEMP_C,1);
+}
+
+void ShowFAN_Task(void *arg){
+    uint8_t level = *(uint8_t *)arg;
+    static uint8_t frame_skip_counter = 0;
+    uint8_t speed_factor = 8 - level*2;
+    if (speed_factor == 0) speed_factor = 1;
+    frame_skip_counter++;
+    if (frame_skip_counter >= speed_factor && level != 0) {
+        frame_skip_counter = 0;
+        fan_cont++;
+        fan_cont %= 6;
     }
+    ShowFanStatus(11, 18, level, fan_cont);
+}
+
+
+void DWT_Init(void)
+{
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+}
+
+  
+void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx)
+{
+    // ÏÔÊ¾·çÉÈÍ¼±ê£¨24x24£©
+    OLED_ShowPicture(x, y, 24, 24, FAN_FRAMES[fan_frame_idx], 1);
+
+    // ¸ù¾İµµÎ»ÏÔÊ¾²»Í¬ÊıÁ¿µÄ·ç¸ñÌõ
+    switch (level)
+    {
+    case 0:
+       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_AIR, 1);
+       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_AIR, 1);
+       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
+      break;
+    case 1:
+       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
+       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_AIR, 1);
+       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
+      break;
+    case 2:
+       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
+       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_SOLID, 1);
+       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
+      break;
+    case 3:
+       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
+       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_SOLID, 1);
+       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_SOLID, 1);
+      break;
+    default:
+      break;
+    }
+}
+
+void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode)
+{
+    u32 minutes = total_seconds / 60;
+    u32 seconds = total_seconds % 60;
+		OLED_ShowPicture(x,y,24,24,TIMER1,1);
+    OLED_ShowNum(x+28,y+4, minutes, 2, size, mode); // ????????2¦Ë??
+    OLED_ShowString(x + size * 2 * 1-16+28, y-1+4, ":", size, mode); // ???????6 ???????????
+    OLED_ShowNum(x + size * 2 * 1-8+28, y+4, seconds, 2, size, mode); // ?????2¦Ë??
+}
+void OLED_ShowEncoderValue(void)
+{
+    int count = __HAL_TIM_GET_COUNTER(&htim1);
+    OLED_ShowString(84, 52, "CNT:", 12, 1);         // ÏÔÊ¾Ç°×º
+    OLED_ShowNum(110, 52, (int)count/4, 3, 12, 1);            // ÏÔÊ¾±àÂëÆ÷ÊıÖµ
 }
 
 /* USER CODE END 0 */
@@ -125,6 +218,7 @@ int main(void)
   MX_TIM2_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+  DWT_Init();
 	HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
 	OLED_Init();
 	OLED_DisPlay_On();
@@ -135,52 +229,19 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	uint16_t fan_cont = 0, bat_lev_cont = 0 , temp = 0;
   while (1)
   {
-			uint32_t frame_start = HAL_GetTick();  // è®°å½•å¸§å¼€å§‹æ—¶é—´
-
-			OLED_ShowFPS();
-			OLED_ShowEncoderValue();
-			OLED_ShowPicture(11,6+12,24,24,FAN_FRAMES[fan_cont],1);
-			OLED_ShowPicture(1+40,12+12,24,12,BAR_SOLID,1);
-			OLED_ShowPicture(28+40,12+12,24,12,BAR_SOLID,1);
-			OLED_ShowPicture(55+40,12+12,24,12,BAR_AIR,1);
-
-			if(bat_lev_cont % 20 == 0)
-			{
-					temp++;
-					temp %= 50;
-					OLED_ShowPicture(96,0,32,16,BAT_LEVELS[bat_lev_cont / 20],1);
-					OLED_ShowPicture(42,3,16,16,TEMP_ICO,1);
-					OLED_ShowNum(56,2,temp,2,16,1);
-					OLED_ShowPicture(72,4,12,12,TEMP_C,1);
-					bat_lev_cont %= 120;
-			}
-
-			if(timer_seconds_cont % 35 == 0)
-			{
-					timer_seconds++;
-					if(timer_seconds > 5999) timer_seconds = 0;
-					OLED_ShowTimer(10, 40, timer_seconds, 16, 1);
-					timer_seconds_cont = 0;
-			}
-
+      start_time = DWT->CYCCNT; 
+      int count = __HAL_TIM_GET_COUNTER(&htim1);
+      count/=8;
+      count%=4;
+      DelayCall(ShowRunTime_Task,NULL,10);
+      DelayCall(ShowTime_Task, NULL, 1000);
+      DelayCall(ShowBATLev_Task, NULL, 3000);
+      DelayCall(ShowTEMP_Task, NULL, 500);
+      DelayCall(ShowFAN_Task, (void *)&count, 8);
 			OLED_Refresh();
-
-			fan_cont++;
-			fan_cont %= 6;
-			bat_lev_cont++;
-			timer_seconds_cont++;
-
-			uint32_t frame_end = HAL_GetTick();  // è®°å½•å¸§ç»“æŸæ—¶é—´
-			uint32_t frame_time = frame_end - frame_start;
-
-			if (frame_time < FRAME_TARGET_MS)
-			{
-					HAL_Delay(FRAME_TARGET_MS - frame_time);  // åŠ¨æ€è¡¥å¿å»¶æ—¶
-			}
-//		HAL_Delay(1);
+      elapsed_time =  DWT->CYCCNT - start_time;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -235,24 +296,6 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode)
-{
-    u32 minutes = total_seconds / 60;
-    u32 seconds = total_seconds % 60;
-//		OLED_ShowChinese(x,y,11,16,1);
-//		OLED_ShowChinese(x+17,y,12,16,1);
-		OLED_ShowPicture(x,y,24,24,TIMER1,1);
-    OLED_ShowNum(x+28,y+4, minutes, 2, size, mode); // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ó£ï¿½2Î»ï¿½ï¿½
-    OLED_ShowString(x + size * 2 * 1-16+28, y-1+4, ":", size, mode); // ï¿½ï¿½Ê¾Ã°ï¿½Å£ï¿½6 ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½
-    OLED_ShowNum(x + size * 2 * 1-8+28, y+4, seconds, 2, size, mode); // ï¿½ï¿½Ê¾ï¿½ë£¨2Î»ï¿½ï¿½
-}
-void OLED_ShowEncoderValue(void)
-{
-    int count = __HAL_TIM_GET_COUNTER(&htim1);
-    OLED_ShowString(84, 52, "CNT:", 12, 1);         // æ˜¾ç¤ºå‰ç¼€
-    OLED_ShowNum(110, 52, (int)count/4, 3, 12, 1);            // æ˜¾ç¤ºç¼–ç å™¨æ•°å€¼
-}
 
 /* USER CODE END 4 */
 
