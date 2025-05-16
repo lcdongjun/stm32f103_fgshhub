@@ -18,6 +18,6 @@ void DWT_Init(void)
 void delay_us(unsigned long us) {
     volatile uint32_t* cyccnt = &DWT->CYCCNT;
     uint32_t start = *cyccnt;
-    uint32_t cycles = us * (SystemCoreClock / 1000000);
+    uint32_t cycles = us * SYSClock_MHZ;
     while ((*cyccnt - start) < cycles);
 }

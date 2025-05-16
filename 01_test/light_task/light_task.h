@@ -25,6 +25,7 @@ extern DelayTask tasks[MAX_TASKS];
 
 
 void DelayCall(void (*func)(void *), void *arg, uint32_t interval_ms);
+void DelayCallRemove(void (*func)(void *), void *arg);
 void DelayStart(NonBlockingDelay *delay, uint32_t delay_ms);
 uint8_t DelayIsExpired(NonBlockingDelay *delay);
 

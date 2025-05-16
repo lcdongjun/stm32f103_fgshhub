@@ -1,7 +1,8 @@
 --cpu Cortex-M3
 "test\startup_stm32f103x6.o"
-"test\main.o"
 "test\light_task.o"
+"test\delay.o"
+"test\main.o"
 "test\gpio.o"
 "test\adc.o"
 "test\dma.o"
@@ -10,7 +11,6 @@
 "test\spi.o"
 "test\tim.o"
 "test\usart.o"
-"test\delay.o"
 "test\stm32f1xx_it.o"
 "test\stm32f1xx_hal_msp.o"
 "test\stm32f1xx_hal_gpio_ex.o"

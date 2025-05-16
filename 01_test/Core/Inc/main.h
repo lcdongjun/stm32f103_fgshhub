@@ -88,6 +88,8 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
+#define SYSClock_MHZ 72
+
 typedef uint32_t  u32;
 typedef uint16_t u16;
 typedef uint8_t  u8;

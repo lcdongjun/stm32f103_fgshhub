@@ -72,21 +72,20 @@ void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode);
 void OLED_ShowEncoderValue(void);
 void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx);
 
-
+static uint32_t loop_count = 0;
+static uint64_t total_elapsed_cycles = 0;
+static uint32_t last_tick = 0;
 void ShowRunTime(){
-	static uint32_t loop_count = 0;
-	static uint64_t total_elapsed_cycles = 0;
-	static uint32_t last_tick = 0;
-	
 	uint32_t elapsed_cycles = (DWT->CYCCNT - start_time) & 0xFFFFFFFF;
 	total_elapsed_cycles += elapsed_cycles;
 	loop_count++;
 	uint32_t current_tick = HAL_GetTick();
 	if (current_tick - last_tick >= 1000) {
 			last_tick = current_tick;
-			uint32_t avg_us = (total_elapsed_cycles / loop_count) / (SystemCoreClock / 1000000);
+			uint32_t avg_us = (total_elapsed_cycles / loop_count)/SYSClock_MHZ;
 			OLED_ShowString(86, 48, "T:", 12, 1);
 			OLED_ShowNum(98, 48, avg_us, 4, 12, 1);
+			OLED_ShowString(122, 48, "u", 12, 1);
 			total_elapsed_cycles = 0;
 			loop_count = 0;
 	}
@@ -111,6 +110,13 @@ void ShowTime_Task(void *arg)
     if (timer_seconds >= 5999)
         timer_seconds = 0;
     OLED_ShowTimer(10, 40, timer_seconds, 16, 1);
+//		if(sTime.Seconds >=10)
+//		{
+//			OLED_DisPlay_Off();
+//			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+//			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
+//			HAL_PWR_EnterSTANDBYMode();
+//		}
 }
 
 void ShowBATLev_Task(void *arg){
@@ -146,7 +152,7 @@ void Test_Delay_Task(void *arg)
 		static uint16_t delay_cont = 0;
 	
     if (!delay.active) {
-        DelayStart(&delay, 2000);
+        DelayStart(&delay, 1000);
         return;
     }
 
@@ -255,27 +261,51 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	
+	ShowTime_Task(NULL);
+	ShowBATLev_Task(NULL);
+	ShowTEMP_Task(NULL);
+	ShowFAN_Task(NULL);
+	Test_Delay_Task(NULL);
+	
+	uint8_t Time_Task_Run = 0;
   while (1)
   {
-    uint32_t start_time = DWT->CYCCNT;
+		start_time = DWT->CYCCNT;
 
-    uint32_t count = __HAL_TIM_GET_COUNTER(&htim1);
-		
+    int32_t count = __HAL_TIM_GET_COUNTER(&htim1);
     count = count / 12;
 		if(count >=4)
 		{
 			count = 0;
 			__HAL_TIM_SET_COUNTER(&htim1,0);
 		}
-		
-    DelayCall(ShowTime_Task, NULL, 500);
+		if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0) == 1)
+		{
+			Time_Task_Run = ~Time_Task_Run;
+			MX_RTC_Init();
+		}
+		if(Time_Task_Run)
+		{
+			DelayCall(ShowTime_Task, NULL, 500);
+		}
+		else
+		{
+			DelayCallRemove(ShowTime_Task,NULL);
+		}
     DelayCall(ShowBATLev_Task, NULL, 3000);
-    DelayCall(ShowTEMP_Task, NULL, 500);
+    DelayCall(ShowTEMP_Task, NULL, 1000);
     DelayCall(ShowFAN_Task, (void *)&count, 16);
-		DelayCall(Test_Delay_Task,NULL,2);
+		DelayCall(Test_Delay_Task,NULL, 200);
     OLED_Refresh();
-
 		ShowRunTime();
+		if(HAL_GetTick() >=60000)
+		{
+			OLED_DisPlay_Off();
+			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
+			HAL_PWR_EnterSTANDBYMode();
+//			HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFE);
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
