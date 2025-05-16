@@ -61,8 +61,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LED_Pin GPIO_PIN_13
-#define LED_GPIO_Port GPIOC
 #define BAT_LEV_Pin GPIO_PIN_1
 #define BAT_LEV_GPIO_Port GPIOA
 #define OLED_CS_Pin GPIO_PIN_2
@@ -115,25 +113,25 @@ typedef uint8_t  u8;
 #define GPIOG_IDR_Addr    (GPIOG_BASE+8) //0x40011E08 
  
 
-#define PAout(n)   BIT_ADDR(GPIOA_ODR_Addr,n)  //ï¿½ï¿½ï¿½ 
+#define PAout(n)   BIT_ADDR(GPIOA_ODR_Addr,n)  //ï¿½ï¿½ï¿? 
 #define PAin(n)    BIT_ADDR(GPIOA_IDR_Addr,n)  //ï¿½ï¿½ï¿½ï¿½ 
 
-#define PBout(n)   BIT_ADDR(GPIOB_ODR_Addr,n)  //ï¿½ï¿½ï¿½ 
+#define PBout(n)   BIT_ADDR(GPIOB_ODR_Addr,n)  //ï¿½ï¿½ï¿? 
 #define PBin(n)    BIT_ADDR(GPIOB_IDR_Addr,n)  //ï¿½ï¿½ï¿½ï¿½ 
 
-#define PCout(n)   BIT_ADDR(GPIOC_ODR_Addr,n)  //ï¿½ï¿½ï¿½ 
+#define PCout(n)   BIT_ADDR(GPIOC_ODR_Addr,n)  //ï¿½ï¿½ï¿? 
 #define PCin(n)    BIT_ADDR(GPIOC_IDR_Addr,n)  //ï¿½ï¿½ï¿½ï¿½ 
 
-#define PDout(n)   BIT_ADDR(GPIOD_ODR_Addr,n)  //ï¿½ï¿½ï¿½ 
+#define PDout(n)   BIT_ADDR(GPIOD_ODR_Addr,n)  //ï¿½ï¿½ï¿? 
 #define PDin(n)    BIT_ADDR(GPIOD_IDR_Addr,n)  //ï¿½ï¿½ï¿½ï¿½ 
 
-#define PEout(n)   BIT_ADDR(GPIOE_ODR_Addr,n)  //ï¿½ï¿½ï¿½ 
+#define PEout(n)   BIT_ADDR(GPIOE_ODR_Addr,n)  //ï¿½ï¿½ï¿? 
 #define PEin(n)    BIT_ADDR(GPIOE_IDR_Addr,n)  //ï¿½ï¿½ï¿½ï¿½
 
-#define PFout(n)   BIT_ADDR(GPIOF_ODR_Addr,n)  //ï¿½ï¿½ï¿½ 
+#define PFout(n)   BIT_ADDR(GPIOF_ODR_Addr,n)  //ï¿½ï¿½ï¿? 
 #define PFin(n)    BIT_ADDR(GPIOF_IDR_Addr,n)  //ï¿½ï¿½ï¿½ï¿½
 
-#define PGout(n)   BIT_ADDR(GPIOG_ODR_Addr,n)  //ï¿½ï¿½ï¿½ 
+#define PGout(n)   BIT_ADDR(GPIOG_ODR_Addr,n)  //ï¿½ï¿½ï¿? 
 #define PGin(n)    BIT_ADDR(GPIOG_IDR_Addr,n)  //ï¿½ï¿½ï¿½ï¿½
 
 

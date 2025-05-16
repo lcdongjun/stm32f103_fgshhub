@@ -21,6 +21,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "i2c.h"
+#include "rtc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -28,7 +29,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "delay.h"
 #include "light_task.h"
+#include "ds18b20.h"
 #include "oled.h"
 #include "bmp.h"
 /* USER CODE END Includes */
@@ -73,25 +76,44 @@ uint8_t BMP3_rotated[72];
 u32 timer_seconds = 0 , timer_seconds_cont = 0;
 
 
-void ShowRunTime_Task(void *arg){
-  static  uint32_t time_ = 0, cont = 0;
-  time_+=elapsed_time;
-  cont++;
-  if (cont ==100)
-  {
-    cont = 0;
-    time_/=7200;
-    OLED_ShowString(86, 48, "T:", 12, 1);
-    OLED_ShowNum(98, 48, time_, 4, 12, 1);
-    time_ = 0;
-  }
+void ShowRunTime(){
+	static uint32_t loop_count = 0;
+	static uint64_t total_elapsed_cycles = 0;
+	static uint32_t last_tick = 0;
+	
+	uint32_t elapsed_cycles = (DWT->CYCCNT - start_time) & 0xFFFFFFFF;
+	total_elapsed_cycles += elapsed_cycles;
+	loop_count++;
+	uint32_t current_tick = HAL_GetTick();
+	if (current_tick - last_tick >= 1000) {
+			last_tick = current_tick;
+			uint32_t avg_us = (total_elapsed_cycles / loop_count) / (SystemCoreClock / 1000000);
+			OLED_ShowString(86, 48, "T:", 12, 1);
+			OLED_ShowNum(98, 48, avg_us, 4, 12, 1);
+			total_elapsed_cycles = 0;
+			loop_count = 0;
+	}
 }
 
-void ShowTime_Task(void *arg){
-  timer_seconds++;
-  if(timer_seconds>=5999)
-    timer_seconds = 0;
-  OLED_ShowTimer(10, 40, timer_seconds, 16, 1);
+void ShowTime_Task(void *arg)
+{
+    RTC_TimeTypeDef sTime;
+    RTC_DateTypeDef sDate;
+    HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+    HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+    static uint8_t last_seconds = 0;
+    uint8_t current_seconds = sTime.Seconds;
+    uint8_t diff = (current_seconds - last_seconds) % 60;
+
+    if (diff > 0)
+    {
+        last_seconds = current_seconds;
+        timer_seconds += diff;
+    }
+    if (timer_seconds >= 5999)
+        timer_seconds = 0;
+    OLED_ShowTimer(10, 40, timer_seconds, 16, 1);
 }
 
 void ShowBATLev_Task(void *arg){
@@ -101,17 +123,16 @@ void ShowBATLev_Task(void *arg){
 }
 
 void ShowTEMP_Task(void *arg){
-  temp++;
-  temp%=60;
+	temp = (uint16_t)DS18B20_Get_Temp();
   OLED_ShowPicture(42,3,16,16,TEMP_ICO,1);
-  OLED_ShowNum(56,2,temp,2,16,1);
+  OLED_ShowNum(56,2,temp,3,16,1);
   OLED_ShowPicture(72,4,12,12,TEMP_C,1);
 }
 
 void ShowFAN_Task(void *arg){
     uint8_t level = *(uint8_t *)arg;
     static uint8_t frame_skip_counter = 0;
-    uint8_t speed_factor = 8 - level*2;
+    uint8_t speed_factor = 4 - level;
     if (speed_factor == 0) speed_factor = 1;
     frame_skip_counter++;
     if (frame_skip_counter >= speed_factor && level != 0) {
@@ -121,14 +142,6 @@ void ShowFAN_Task(void *arg){
     }
     ShowFanStatus(11, 18, level, fan_cont);
 }
-
-
-void DWT_Init(void)
-{
-    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-}
-
   
 void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx)
 {
@@ -168,9 +181,9 @@ void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode)
     u32 minutes = total_seconds / 60;
     u32 seconds = total_seconds % 60;
 		OLED_ShowPicture(x,y,24,24,TIMER1,1);
-    OLED_ShowNum(x+28,y+4, minutes, 2, size, mode); // ????????2¦Ë??
-    OLED_ShowString(x + size * 2 * 1-16+28, y-1+4, ":", size, mode); // ???????6 ???????????
-    OLED_ShowNum(x + size * 2 * 1-8+28, y+4, seconds, 2, size, mode); // ?????2¦Ë??
+    OLED_ShowNum(x+28,y+4, minutes, 2, size, mode);
+    OLED_ShowString(x + size * 2 * 1-16+28, y-1+4, ":", size, mode);
+    OLED_ShowNum(x + size * 2 * 1-8+28, y+4, seconds, 2, size, mode);
 }
 void OLED_ShowEncoderValue(void)
 {
@@ -217,9 +230,11 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM2_Init();
   MX_SPI1_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  DWT_Init();
+	DWT_Init();
 	HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
+	DS18B20_Init();
 	OLED_Init();
 	OLED_DisPlay_On();
 	OLED_ColorTurn(0);
@@ -229,19 +244,26 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	
   while (1)
   {
-      start_time = DWT->CYCCNT; 
-      int count = __HAL_TIM_GET_COUNTER(&htim1);
-      count/=8;
-      count%=4;
-      DelayCall(ShowRunTime_Task,NULL,10);
-      DelayCall(ShowTime_Task, NULL, 1000);
-      DelayCall(ShowBATLev_Task, NULL, 3000);
-      DelayCall(ShowTEMP_Task, NULL, 500);
-      DelayCall(ShowFAN_Task, (void *)&count, 8);
-			OLED_Refresh();
-      elapsed_time =  DWT->CYCCNT - start_time;
+    uint32_t start_time = DWT->CYCCNT;
+
+    uint32_t count = __HAL_TIM_GET_COUNTER(&htim1);
+		
+    count = count / 12;
+	if(count >=4)
+	{
+		count = 0;
+		__HAL_TIM_SET_COUNTER(&htim1,0);
+	}
+    DelayCall(ShowTime_Task, NULL, 500);
+    DelayCall(ShowBATLev_Task, NULL, 3000);
+    DelayCall(ShowTEMP_Task, NULL, 500);
+    DelayCall(ShowFAN_Task, (void *)&count, 16);
+    OLED_Refresh();
+
+		ShowRunTime();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -262,10 +284,11 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
@@ -287,7 +310,8 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_ADC;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC|RCC_PERIPHCLK_ADC;
+  PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
   PeriphClkInit.AdcClockSelection = RCC_ADCPCLK2_DIV6;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
