@@ -1,8 +1,8 @@
 #include "light_task.h"
 
-
 DelayTask tasks[MAX_TASKS] = {0};
 
+//创建一个任务
 void DelayCall(void (*func)(void *), void *arg, uint32_t interval_ms)
 {
     for (int i = 0; i < MAX_TASKS; i++) {
@@ -25,7 +25,7 @@ void DelayCall(void (*func)(void *), void *arg, uint32_t interval_ms)
     }
 }
 
-
+//删除任务
 void DelayCallRemove(void (*func)(void *), void *arg)
 {
     for (int i = 0; i < MAX_TASKS; i++) {
@@ -36,3 +36,23 @@ void DelayCallRemove(void (*func)(void *), void *arg)
         }
     }
 }
+
+//开启不阻塞延时
+void DelayStart(NonBlockingDelay *delay, uint32_t delay_ms)
+{
+    delay->start_time = HAL_GetTick();
+    delay->delay_ms = delay_ms;
+    delay->active = 1;
+}
+
+//进行延时
+uint8_t DelayIsExpired(NonBlockingDelay *delay)
+{
+    if (!delay->active) return 1;
+    if (HAL_GetTick() - delay->start_time >= delay->delay_ms) {
+        delay->active = 0;
+        return 1;
+    }
+    return 0;
+}
+

@@ -14,10 +14,20 @@ typedef struct {
     uint8_t active;             // ÊÇ·ñ¼¤»î
 } DelayTask;
 
+typedef struct {
+    uint32_t start_time;
+    uint32_t delay_ms;
+    uint8_t active;
+} NonBlockingDelay;
+
+
 extern DelayTask tasks[MAX_TASKS];
 
 
 void DelayCall(void (*func)(void *), void *arg, uint32_t interval_ms);
+void DelayStart(NonBlockingDelay *delay, uint32_t delay_ms);
+uint8_t DelayIsExpired(NonBlockingDelay *delay);
+
 
 #endif
 

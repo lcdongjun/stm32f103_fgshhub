@@ -38,10 +38,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-#define FRAME_TARGET_MS 16  
 
-uint16_t fan_cont = 0, bat_lev_cont = 0 , temp = 0, fan_lev = 0;
-uint32_t start_time = 0, elapsed_time = 0;
+uint16_t fan_cont = 0, bat_lev_cont = 0 , temp = 0;
+uint32_t start_time = 0, elapsed_time = 0, timer_seconds = 0;
 
 /* USER CODE END PTD */
 
@@ -72,8 +71,6 @@ void SystemClock_Config(void);
 void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode);
 void OLED_ShowEncoderValue(void);
 void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx);
-uint8_t BMP3_rotated[72];
-u32 timer_seconds = 0 , timer_seconds_cont = 0;
 
 
 void ShowRunTime(){
@@ -143,6 +140,25 @@ void ShowFAN_Task(void *arg){
     ShowFanStatus(11, 18, level, fan_cont);
 }
   
+void Test_Delay_Task(void *arg)
+{
+		static NonBlockingDelay delay;
+		static uint16_t delay_cont = 0;
+	
+    if (!delay.active) {
+        DelayStart(&delay, 2000);
+        return;
+    }
+
+    if (!DelayIsExpired(&delay)) {
+        return;
+    }
+		delay_cont++;
+		delay_cont%=99;
+		OLED_ShowNum(24,1, delay_cont, 2, 12, 1);
+    OLED_ShowString(1,1, "T:", 12, 1);
+}
+
 void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx)
 {
     // 显示风扇图标（24x24）
@@ -184,12 +200,6 @@ void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode)
     OLED_ShowNum(x+28,y+4, minutes, 2, size, mode);
     OLED_ShowString(x + size * 2 * 1-16+28, y-1+4, ":", size, mode);
     OLED_ShowNum(x + size * 2 * 1-8+28, y+4, seconds, 2, size, mode);
-}
-void OLED_ShowEncoderValue(void)
-{
-    int count = __HAL_TIM_GET_COUNTER(&htim1);
-    OLED_ShowString(84, 52, "CNT:", 12, 1);         // 显示前缀
-    OLED_ShowNum(110, 52, (int)count/4, 3, 12, 1);            // 显示编码器数值
 }
 
 /* USER CODE END 0 */
@@ -252,15 +262,17 @@ int main(void)
     uint32_t count = __HAL_TIM_GET_COUNTER(&htim1);
 		
     count = count / 12;
-	if(count >=4)
-	{
-		count = 0;
-		__HAL_TIM_SET_COUNTER(&htim1,0);
-	}
+		if(count >=4)
+		{
+			count = 0;
+			__HAL_TIM_SET_COUNTER(&htim1,0);
+		}
+		
     DelayCall(ShowTime_Task, NULL, 500);
     DelayCall(ShowBATLev_Task, NULL, 3000);
     DelayCall(ShowTEMP_Task, NULL, 500);
     DelayCall(ShowFAN_Task, (void *)&count, 16);
+		DelayCall(Test_Delay_Task,NULL,2);
     OLED_Refresh();
 
 		ShowRunTime();
