@@ -255,7 +255,7 @@ int main(void)
 			AllStop();
 //			HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFI);
 //			AllInit();
-			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
+			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
 			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
 			HAL_PWR_EnterSTANDBYMode();
 		}

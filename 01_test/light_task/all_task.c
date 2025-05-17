@@ -37,13 +37,6 @@ void ShowTime_Task(void *arg)
 	{
 		OLED_ShowTimer(10, 40, 0, 16, 1);
 	}
-//		if(sTime.Seconds >=10)
-//		{
-//			OLED_DisPlay_Off();
-//			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
-//			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
-//			HAL_PWR_EnterSTANDBYMode();
-//		}
 }
 
 void ShowBATLev_Task(void *arg){
