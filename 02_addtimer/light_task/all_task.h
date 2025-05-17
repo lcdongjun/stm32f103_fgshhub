@@ -15,6 +15,11 @@ void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode);
 void Run_Fan_Task( uint16_t time_interval);
 void Run_ShowTime_Task(uint16_t time_interval);
 
+//获取风扇的档位
+void Get_GPIO_State(void);
+//设置风扇的档位
+void Set_Fan_State(uint8_t count);
+	
 
 #endif
 

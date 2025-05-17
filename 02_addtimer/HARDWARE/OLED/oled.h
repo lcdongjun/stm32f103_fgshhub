@@ -4,12 +4,6 @@
 #include "main.h"
 
 //-----------------OLED¶Ë¿Ú¶¨Òå---------------- 
-//#define OLED_SCL_Clr() HAL_GPIO_WritePin(OLED_SCK_GPIO_Port,OLED_SCK_Pin,GPIO_PIN_RESET)//SCL
-//#define OLED_SCL_Set() HAL_GPIO_WritePin(OLED_SCK_GPIO_Port,OLED_SCK_Pin,GPIO_PIN_SET)
-
-//#define OLED_SDA_Clr() HAL_GPIO_WritePin(OLED_SDA_GPIO_Port,OLED_SDA_Pin,GPIO_PIN_RESET)//SDA
-//#define OLED_SDA_Set() HAL_GPIO_WritePin(OLED_SDA_GPIO_Port,OLED_SDA_Pin,GPIO_PIN_SET)
-
 #define OLED_RES_Clr() HAL_GPIO_WritePin(OLED_RST_GPIO_Port,OLED_RST_Pin,GPIO_PIN_RESET)//RES
 #define OLED_RES_Set() HAL_GPIO_WritePin(OLED_RST_GPIO_Port,OLED_RST_Pin,GPIO_PIN_SET)
 																							 

@@ -3,6 +3,7 @@
 "test\light_task.o"
 "test\delay.o"
 "test\all_task.o"
+"test\it_callback.o"
 "test\main.o"
 "test\gpio.o"
 "test\adc.o"
@@ -37,6 +38,9 @@
 "test\system_stm32f1xx.o"
 "test\oled.o"
 "test\ds18b20.o"
+"test\bmp.o"
+"test\light_ui.o"
+"test\ui_comp.o"
 --library_type=microlib --strict --scatter "test\test.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103x6</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../light_task;../HARDWARE/OLED;../HARDWARE/DS18B20</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;../light_task;../HARDWARE/OLED;../HARDWARE/DS18B20;../HARDWARE/UI</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,6 +413,11 @@
               <FileName>all_task.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\light_task\all_task.h</FilePath>
+            </File>
+            <File>
+              <FileName>it_callback.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\it_callback.c</FilePath>
             </File>
             <File>
               <FileName>main.c</FileName>
@@ -904,6 +909,26 @@
               <FileName>ds18b20.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\DS18B20\ds18b20.c</FilePath>
+            </File>
+            <File>
+              <FileName>bmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\OLED\bmp.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>UI</GroupName>
+          <Files>
+            <File>
+              <FileName>light_ui.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\UI\light_ui.c</FilePath>
+            </File>
+            <File>
+              <FileName>ui_comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\UI\ui_comp.c</FilePath>
             </File>
           </Files>
         </Group>

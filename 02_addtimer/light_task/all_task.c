@@ -11,13 +11,19 @@
 
 #include "delay.h"
 #include "ds18b20.h"
+
+#include "light_task.h"
+#include "light_ui.h"
+#include "ui_comp.h"
+
 #include "oled.h"
 #include "bmp.h"
-#include "light_task.h"
 
-uint16_t fan_cont = 0, bat_lev_cont = 0 , temp = 0;
+uint8_t fan_mode = 0 , set_fan_mode = 0;
+uint16_t fan_cont = 4, bat_lev_cont = 0 , temp = 0;
 uint32_t timer_seconds = 0;
 bool Time_Task_Run = 0;
+float Real_value; //实际电压值
 
 
 
@@ -60,16 +66,16 @@ void AllStop()
 	
 }
 
+//显示运行时间
 void ShowTime_Task(void *arg)
 {
 	uint8_t run_flag = *(uint8_t *)arg;
-	printf("run_flag : %d\r\n",run_flag);
 	if(run_flag == 1)
 	{
-		timer_seconds = counter/10;
-    if (timer_seconds >= 5999)
+		timer_seconds = counter;
+    if (timer_seconds >= 59990)
         timer_seconds = 0;
-    OLED_ShowTimer(10, 40, timer_seconds, 16, 1);
+    OLED_ShowTimer(10, 40, timer_seconds/10, 16, 1);
 	}
 	else
 	{
@@ -77,13 +83,28 @@ void ShowTime_Task(void *arg)
 	}
 }
 
+//采集并显示电池电量
 void ShowBATLev_Task(void *arg)
 {
-  bat_lev_cont++;
-  bat_lev_cont%=7;
+	HAL_ADC_Start_IT(&hadc1);
+	
+	static NonBlockingDelay delay;
+
+	if (!delay.active) {
+			DelayStart(&delay, 100);
+			return;
+	}
+
+	if (!DelayIsExpired(&delay)) {
+			return;
+	}
+	Real_value=(float)(ADC_value)/2048*3.3;
+	printf("The ADC_value is %d",ADC_value);
+	printf("The Real_value is %f\n\n",Real_value); 
   OLED_ShowPicture(96,0,32,16,BAT_LEVELS[bat_lev_cont],1);
 }
 
+//采集并显示温度
 void ShowTEMP_Task(void *arg)
 {
 	temp = (uint16_t)DS18B20_Get_Temp();
@@ -92,6 +113,7 @@ void ShowTEMP_Task(void *arg)
   OLED_ShowPicture(72,4,12,12,TEMP_C,1);
 }
 
+//根据编码器显示风扇档数
 void ShowFAN_Task(void *arg)
 {
 		
@@ -106,7 +128,9 @@ void ShowFAN_Task(void *arg)
     }
     ShowFanStatus(11, 18, level, fan_cont);
 }
-  
+ 
+
+//用于测试不阻塞延时
 void Test_Delay_Task(void *arg)
 {
 	//提供创建一个不阻塞的延时的示范程序
@@ -128,49 +152,7 @@ void Test_Delay_Task(void *arg)
     OLED_ShowString(1,1, "T:", 12, 1);
 }
 
-void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx)
-{
-    // 显示风扇图标（24x24）
-    OLED_ShowPicture(x, y, 24, 24, FAN_FRAMES[fan_frame_idx], 1);
-
-    // 根据档位显示不同数量的风格条
-    switch (level)
-    {
-    case 0:
-       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_AIR, 1);
-       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_AIR, 1);
-       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
-      break;
-    case 1:
-       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_AIR, 1);
-       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
-      break;
-    case 2:
-       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
-      break;
-    case 3:
-       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_SOLID, 1);
-      break;
-    default:
-      break;
-    }
-}
-
-void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode)
-{
-    u32 minutes = total_seconds / 60;
-    u32 seconds = total_seconds % 60;
-		OLED_ShowPicture(x,y,24,24,TIMER1,1);
-    OLED_ShowNum(x+28,y+4, minutes, 2, size, mode);
-    OLED_ShowString(x + size * 2 * 1-16+28, y-1+4, ":", size, mode);
-    OLED_ShowNum(x + size * 2 * 1-8+28, y+4, seconds, 2, size, mode);
-}
-
+//运行获取编码器值来切换风扇档位
 void Run_Fan_Task( uint16_t time_interval)
 {
 	//获取编码器的值，除以12来消抖
@@ -181,22 +163,31 @@ void Run_Fan_Task( uint16_t time_interval)
 			count = 0;
 			__HAL_TIM_SET_COUNTER(&htim1,0);
 		}
+		set_fan_mode = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0);
+		if(set_fan_mode ==1)
+			Set_Fan_State(count);
+		
     DelayCall(ShowFAN_Task, (void *)&count, time_interval);
+		
+//   int32_t count = __HAL_TIM_GET_COUNTER(&htim1);
+//    count = count;
+//		if(count >=365)
+//		{
+//			count = 0;
+//			__HAL_TIM_SET_COUNTER(&htim1,0);
+//		}
+//		Paint_Show_Arc(64,32,25,0,count,1,1,0,1);
 }
 
+//运行切换显示运行时间函数
 void Run_ShowTime_Task(uint16_t time_interval)
 {
 	//检测编码器按键是否按下，按下就切换显示时间状态
-	static uint32_t last_press_time = 0;
 		if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0) == 1)
 		{
-				if (HAL_GetTick() - last_press_time > 50)
-				{
-            Time_Task_Run = !Time_Task_Run;
-            counter = 0;
-            (Time_Task_Run) ? HAL_TIM_Base_Start_IT(&htim2) : HAL_TIM_Base_Stop_IT(&htim2);
-        }
-				last_press_time = HAL_GetTick();
+			Time_Task_Run = !Time_Task_Run;
+			counter = 0;
+			(Time_Task_Run) ? HAL_TIM_Base_Start_IT(&htim2) : HAL_TIM_Base_Stop_IT(&htim2);
 		}
 		DelayCall(ShowTime_Task, (void *)&Time_Task_Run, time_interval);
 }
@@ -209,5 +200,77 @@ void Run_Standby_Stop_Task(uint16_t time_interval)
 			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
 			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
 			HAL_PWR_EnterSTANDBYMode();
+}
 
+//获取风扇的档位
+void Get_GPIO_State()
+{
+	fan_mode = 0;
+	fan_mode |= HAL_GPIO_ReadPin(L1_GPIO_Port,L1_Pin);
+	fan_mode |= HAL_GPIO_ReadPin(L2_GPIO_Port,L2_Pin)<<2;
+	fan_mode |= HAL_GPIO_ReadPin(L3_GPIO_Port,L3_Pin)<<3;
+}
+
+//设置风扇的档位
+void Set_Fan_State(uint8_t count)
+{
+		printf("set fan mode\r\n");
+		switch(count)
+		{
+			case 0:
+				while(fan_mode != 0x00)
+				{
+						HAL_GPIO_WritePin(KEY2_GPIO_Port,KEY2_Pin,GPIO_PIN_SET);
+						HAL_Delay(20);
+						HAL_GPIO_WritePin(KEY2_GPIO_Port,KEY2_Pin,GPIO_PIN_RESET);
+						HAL_Delay(20);
+						Get_GPIO_State();
+						printf("fan_mode: %d",fan_mode);
+				}
+				set_fan_mode = 0;
+				printf("Set Fan Mode 0 OK \r\n");
+				break;
+			case 1:
+				while(fan_mode != 0x01)
+				{
+						HAL_GPIO_WritePin(KEY2_GPIO_Port,KEY2_Pin,GPIO_PIN_SET);
+						HAL_Delay(20);
+						HAL_GPIO_WritePin(KEY2_GPIO_Port,KEY2_Pin,GPIO_PIN_RESET);
+						HAL_Delay(20);
+						Get_GPIO_State();
+						printf("fan_mode: %d",fan_mode);
+				}
+				set_fan_mode = 0;
+				printf("Set Fan Mode 1 OK \r\n");
+				break;
+			case 2:
+				while(fan_mode != 0x04)
+				{
+						HAL_GPIO_WritePin(KEY2_GPIO_Port,KEY2_Pin,GPIO_PIN_SET);
+						HAL_Delay(20);
+						HAL_GPIO_WritePin(KEY2_GPIO_Port,KEY2_Pin,GPIO_PIN_RESET);
+						HAL_Delay(20);
+						Get_GPIO_State();
+						printf("fan_mode: %d",fan_mode);
+				}
+				set_fan_mode = 0;
+				printf("Set Fan Mode 2 OK \r\n");
+				break;
+			case 3:
+				while(fan_mode != 0x08)
+				{
+						HAL_GPIO_WritePin(KEY2_GPIO_Port,KEY2_Pin,GPIO_PIN_SET);
+						HAL_Delay(20);
+						HAL_GPIO_WritePin(KEY2_GPIO_Port,KEY2_Pin,GPIO_PIN_RESET);
+						HAL_Delay(20);
+						Get_GPIO_State();
+						printf("fan_mode: %d",fan_mode);
+				}
+				set_fan_mode = 0;
+				printf("Set Fan Mode 3 OK \r\n");
+				break;
+				
+			default:
+				break;
+		}    
 }

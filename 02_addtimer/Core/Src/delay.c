@@ -1,7 +1,7 @@
 #include "delay.h"
 
 
-volatile  uint32_t counter = 0;	
+
 /**********************************************
 //Delay_us
 **********************************************/
@@ -22,15 +22,5 @@ void delay_us(unsigned long us) {
     uint32_t start = *cyccnt;
     uint32_t cycles = us * SYSClock_MHZ;
     while ((*cyccnt - start) < cycles);
-}
-
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-    if(htim->Instance == TIM2)
-		{
-				counter%=10;
-        counter++;
-    }
 }
 

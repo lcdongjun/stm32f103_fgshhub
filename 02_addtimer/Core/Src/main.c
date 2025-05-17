@@ -31,6 +31,7 @@
 /* USER CODE BEGIN Includes */
 #include "delay.h"
 #include "light_task.h"
+#include "light_ui.h"
 #include "ds18b20.h"
 #include "oled.h"
 //#include "bmp.h"
@@ -70,6 +71,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+
 //显示轮询一次消耗的时间，单位是us
 static uint32_t loop_count = 0;
 static uint64_t total_elapsed_cycles = 0;
@@ -84,9 +86,19 @@ void ShowRunTime()
 	{
 			last_tick = current_tick;
 			uint32_t avg_us = (total_elapsed_cycles / loop_count)/SYSClock_MHZ;
+		if(avg_us>10000)
+		{
+			OLED_ShowString(86, 48, "T:", 12, 1);
+			OLED_ShowNum(98, 48, avg_us/1000, 4, 12, 1);
+			OLED_ShowString(122, 48, "m", 12, 1);
+		}
+		else
+		{
 			OLED_ShowString(86, 48, "T:", 12, 1);
 			OLED_ShowNum(98, 48, avg_us, 4, 12, 1);
 			OLED_ShowString(122, 48, "u", 12, 1);
+		}
+
 			total_elapsed_cycles = 0;
 			loop_count = 0;
 	}
@@ -134,6 +146,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	DWT_Init();
 	HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
+	HAL_ADC_Start_IT(&hadc1);
 	DS18B20_Init();
 	OLED_Init();
 	OLED_DisPlay_On();
@@ -153,13 +166,16 @@ int main(void)
 	
   while (1)
   {
-
+		start_time = DWT->CYCCNT;
+		
 		Run_Fan_Task(16);
-		Run_ShowTime_Task(500);
+		Run_ShowTime_Task(100);
 		
     DelayCall(ShowBATLev_Task, NULL, 3000);
     DelayCall(ShowTEMP_Task, NULL, 1000);
 		DelayCall(Test_Delay_Task,NULL, 200);
+		
+//		Light_ui_test();
 		
     OLED_Refresh();
 		

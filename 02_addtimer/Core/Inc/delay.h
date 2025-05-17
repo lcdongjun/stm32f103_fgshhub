@@ -7,7 +7,6 @@ extern "C" {
 
 #include "main.h"
 
-extern volatile  uint32_t counter;	
 
 void DWT_Init(void);
 void delay_us(unsigned long  us);
