@@ -61,6 +61,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define EC_OK_Pin GPIO_PIN_0
+#define EC_OK_GPIO_Port GPIOA
+#define EC_OK_EXTI_IRQn EXTI0_IRQn
 #define BAT_LEV_Pin GPIO_PIN_1
 #define BAT_LEV_GPIO_Port GPIOA
 #define OLED_CS_Pin GPIO_PIN_2

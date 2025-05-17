@@ -395,6 +395,11 @@
           <GroupName>Application/User/Core</GroupName>
           <Files>
             <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Core/Src/main.c</FilePath>
+            </File>
+            <File>
               <FileName>light_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\light_task\light_task.c</FilePath>
@@ -403,11 +408,6 @@
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Src\delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../Core/Src/main.c</FilePath>
             </File>
             <File>
               <FileName>gpio.c</FileName>
@@ -611,6 +611,16 @@
               <FileName>stm32f1xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>all_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\light_task\all_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>all_task.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\light_task\all_task.h</FilePath>
             </File>
           </Files>
         </Group>

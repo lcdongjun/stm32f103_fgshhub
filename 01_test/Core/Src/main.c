@@ -33,14 +33,15 @@
 #include "light_task.h"
 #include "ds18b20.h"
 #include "oled.h"
-#include "bmp.h"
+//#include "bmp.h"
+#include "all_task.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-uint16_t fan_cont = 0, bat_lev_cont = 0 , temp = 0;
-uint32_t start_time = 0, elapsed_time = 0, timer_seconds = 0;
+uint32_t start_time = 0;
 
 /* USER CODE END PTD */
 
@@ -68,9 +69,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode);
-void OLED_ShowEncoderValue(void);
-void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx);
 
 static uint32_t loop_count = 0;
 static uint64_t total_elapsed_cycles = 0;
@@ -91,121 +89,68 @@ void ShowRunTime(){
 	}
 }
 
-void ShowTime_Task(void *arg)
+void AllInit()
 {
-    RTC_TimeTypeDef sTime;
-    RTC_DateTypeDef sDate;
-    HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-    HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-
-    static uint8_t last_seconds = 0;
-    uint8_t current_seconds = sTime.Seconds;
-    uint8_t diff = (current_seconds - last_seconds) % 60;
-
-    if (diff > 0)
-    {
-        last_seconds = current_seconds;
-        timer_seconds += diff;
-    }
-    if (timer_seconds >= 5999)
-        timer_seconds = 0;
-    OLED_ShowTimer(10, 40, timer_seconds, 16, 1);
-//		if(sTime.Seconds >=10)
-//		{
-//			OLED_DisPlay_Off();
-//			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
-//			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
-//			HAL_PWR_EnterSTANDBYMode();
-//		}
+	//所有系统组件初始化
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
+  MX_DMA_Init();
+  MX_I2C1_Init();
+  MX_TIM1_Init();
+  MX_USART1_UART_Init();
+  MX_ADC1_Init();
+  MX_TIM2_Init();
+  MX_SPI1_Init();
+//  MX_RTC_Init();
+	DWT_Init();
+	HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
+	//重新开启屏幕显示
+	OLED_Init();
+	OLED_DisPlay_On();
+	OLED_ColorTurn(0);
+  OLED_DisplayTurn(0);
 }
 
-void ShowBATLev_Task(void *arg){
-  bat_lev_cont++;
-  bat_lev_cont%=7;
-  OLED_ShowPicture(96,0,32,16,BAT_LEVELS[bat_lev_cont],1);
-}
-
-void ShowTEMP_Task(void *arg){
-	temp = (uint16_t)DS18B20_Get_Temp();
-  OLED_ShowPicture(42,3,16,16,TEMP_ICO,1);
-  OLED_ShowNum(56,2,temp,3,16,1);
-  OLED_ShowPicture(72,4,12,12,TEMP_C,1);
-}
-
-void ShowFAN_Task(void *arg){
-    uint8_t level = *(uint8_t *)arg;
-    static uint8_t frame_skip_counter = 0;
-    uint8_t speed_factor = 4 - level;
-    if (speed_factor == 0) speed_factor = 1;
-    frame_skip_counter++;
-    if (frame_skip_counter >= speed_factor && level != 0) {
-        frame_skip_counter = 0;
-        fan_cont++;
-        fan_cont %= 6;
-    }
-    ShowFanStatus(11, 18, level, fan_cont);
-}
-  
-void Test_Delay_Task(void *arg)
+void AllStop()
 {
-		static NonBlockingDelay delay;
-		static uint16_t delay_cont = 0;
+	//关闭屏幕显示
+	OLED_DisPlay_Off();
+	//所有系统组件停止
+	HAL_TIM_Encoder_Stop(&htim1, TIM_CHANNEL_ALL);
+	HAL_ADC_Stop(&hadc1);
+	HAL_UART_DeInit(&huart1);
+	HAL_SPI_DeInit(&hspi1);
+	HAL_I2C_DeInit(&hi2c1);
+	__HAL_RCC_GPIOA_CLK_DISABLE();
+	__HAL_RCC_GPIOB_CLK_DISABLE();
+	__HAL_RCC_GPIOC_CLK_DISABLE();
 	
-    if (!delay.active) {
-        DelayStart(&delay, 1000);
-        return;
-    }
-
-    if (!DelayIsExpired(&delay)) {
-        return;
-    }
-		delay_cont++;
-		delay_cont%=99;
-		OLED_ShowNum(24,1, delay_cont, 2, 12, 1);
-    OLED_ShowString(1,1, "T:", 12, 1);
 }
 
-void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx)
-{
-    // 显示风扇图标（24x24）
-    OLED_ShowPicture(x, y, 24, 24, FAN_FRAMES[fan_frame_idx], 1);
 
-    // 根据档位显示不同数量的风格条
-    switch (level)
-    {
-    case 0:
-       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_AIR, 1);
-       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_AIR, 1);
-       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
-      break;
-    case 1:
-       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_AIR, 1);
-       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
-      break;
-    case 2:
-       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_AIR, 1);
-      break;
-    case 3:
-       OLED_ShowPicture(x + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 27 + 30, y + 6, 24, 12, BAR_SOLID, 1);
-       OLED_ShowPicture(x + 54 + 30, y + 6, 24, 12, BAR_SOLID, 1);
-      break;
-    default:
-      break;
-    }
-}
 
-void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode)
+void Reset_RTC_Time(void)
 {
-    u32 minutes = total_seconds / 60;
-    u32 seconds = total_seconds % 60;
-		OLED_ShowPicture(x,y,24,24,TIMER1,1);
-    OLED_ShowNum(x+28,y+4, minutes, 2, size, mode);
-    OLED_ShowString(x + size * 2 * 1-16+28, y-1+4, ":", size, mode);
-    OLED_ShowNum(x + size * 2 * 1-8+28, y+4, seconds, 2, size, mode);
+    RTC_TimeTypeDef sTime = {0};
+    RTC_DateTypeDef sDate = {0};
+		sTime.Hours = 0x0;
+		sTime.Minutes = 0x0;
+		sTime.Seconds = 0x0;
+
+		if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BCD) != HAL_OK)
+		{
+			Error_Handler();
+		}
+		sDate.WeekDay = RTC_WEEKDAY_MONDAY;
+		sDate.Month = RTC_MONTH_JANUARY;
+		sDate.Date = 0x1;
+		sDate.Year = 0x0;
+
+		if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BCD) != HAL_OK)
+		{
+			Error_Handler();
+		}
 }
 
 /* USER CODE END 0 */
@@ -267,7 +212,7 @@ int main(void)
 	ShowFAN_Task(NULL);
 	Test_Delay_Task(NULL);
 	
-	uint8_t Time_Task_Run = 0;
+	bool Time_Task_Run = 0;
   while (1)
   {
 		start_time = DWT->CYCCNT;
@@ -281,16 +226,17 @@ int main(void)
 		}
 		if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0) == 1)
 		{
-			Time_Task_Run = ~Time_Task_Run;
-			MX_RTC_Init();
+			while(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0) == 1);
+			Time_Task_Run = !Time_Task_Run;
+			Reset_RTC_Time();
 		}
 		if(Time_Task_Run)
 		{
-			DelayCall(ShowTime_Task, NULL, 500);
+			DelayCall(ShowTime_Task, (void *)&Time_Task_Run, 500);
 		}
 		else
 		{
-			DelayCallRemove(ShowTime_Task,NULL);
+			DelayCall(ShowTime_Task, (void *)&Time_Task_Run, 500);
 		}
     DelayCall(ShowBATLev_Task, NULL, 3000);
     DelayCall(ShowTEMP_Task, NULL, 1000);
@@ -298,13 +244,20 @@ int main(void)
 		DelayCall(Test_Delay_Task,NULL, 200);
     OLED_Refresh();
 		ShowRunTime();
-		if(HAL_GetTick() >=60000)
+		
+		RTC_TimeTypeDef sTime;
+    RTC_DateTypeDef sDate;
+    HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+    HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+		
+		if(sTime.Seconds >=6)
 		{
-			OLED_DisPlay_Off();
-			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
+			AllStop();
+//			HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFI);
+//			AllInit();
+			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_SB);
 			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
 			HAL_PWR_EnterSTANDBYMode();
-//			HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFE);
 		}
     /* USER CODE END WHILE */
 
