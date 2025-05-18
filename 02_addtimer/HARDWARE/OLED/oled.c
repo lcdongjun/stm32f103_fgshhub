@@ -2,7 +2,7 @@
 #include "oledfont.h"  	 
 #include "spi.h"
 
-uint8_t OLED_GRAM[1024];
+uint8_t OLED_GRAM[2048];
 volatile uint8_t spi_dma_busy = 0;
 
 //·´ÏÔº¯Êý

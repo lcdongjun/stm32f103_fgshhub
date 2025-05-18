@@ -4,6 +4,19 @@
 #include "oled.h"
 #include "bmp.h"
 
+
+key_table table[30]=
+{
+	//当前页面 下一个页面 上一个页面 确认页面 返回页面 
+	//第0层,开机画面
+	{0,0,0,1,0,(*hello)},
+	
+};
+
+void hello()
+{
+
+}
 //显示风扇并旋转
 void ShowFanStatus(uint8_t x, uint8_t y, uint8_t level, uint8_t fan_frame_idx)
 {
@@ -49,9 +62,11 @@ void OLED_ShowTimer(u8 x, u8 y, u32 total_seconds, u8 size, u8 mode)
     OLED_ShowNum(x + size * 2 * 1-8+28, y+4, seconds, 2, size, mode);
 }
 
+
 void Light_ui_test()
 {
 
 	Paint_Show_Arc(64,32,25,120,240,4,1,0,1);
 	
 }
+

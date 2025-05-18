@@ -103,7 +103,6 @@ void ShowRunTime()
 			loop_count = 0;
 	}
 }
-
 /* USER CODE END 0 */
 
 /**
@@ -157,12 +156,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	
-	ShowTime_Task(NULL);
-	ShowBATLev_Task(NULL);
-	ShowTEMP_Task(NULL);
-	ShowFAN_Task(NULL);
-	Test_Delay_Task(NULL);
+//	ShowTime_Task(NULL);
+//	ShowBATLev_Task(NULL);
+//	ShowTEMP_Task(NULL);
+//	ShowFAN_Task(NULL);
+//	Show_SysTime_Task(NULL);
 	
   while (1)
   {
@@ -173,10 +171,7 @@ int main(void)
 		
     DelayCall(ShowBATLev_Task, NULL, 3000);
     DelayCall(ShowTEMP_Task, NULL, 1000);
-		DelayCall(Test_Delay_Task,NULL, 200);
-		
-//		Light_ui_test();
-		
+		DelayCall(Show_SysTime_Task,NULL, 200);
     OLED_Refresh();
 		
 		ShowRunTime();

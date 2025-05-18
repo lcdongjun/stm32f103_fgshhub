@@ -39,6 +39,7 @@
 "test\oled.o"
 "test\ds18b20.o"
 "test\bmp.o"
+"test\key.o"
 "test\light_ui.o"
 "test\ui_comp.o"
 --library_type=microlib --strict --scatter "test\test.sct"
