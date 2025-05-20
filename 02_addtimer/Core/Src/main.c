@@ -30,6 +30,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "delay.h"
+#include "key.h"
 #include "light_task.h"
 #include "light_ui.h"
 #include "ds18b20.h"
@@ -103,6 +104,7 @@ void ShowRunTime()
 			loop_count = 0;
 	}
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -156,24 +158,24 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//	ShowTime_Task(NULL);
-//	ShowBATLev_Task(NULL);
-//	ShowTEMP_Task(NULL);
-//	ShowFAN_Task(NULL);
-//	Show_SysTime_Task(NULL);
-	
+	ShowTime_Task(NULL);
+	ShowBATLev_Task(NULL);
+	ShowTEMP_Task(NULL);
+	ShowFAN_Task(NULL);
+	Show_SysTime_Task(NULL);
+	HAL_StatusTypeDef uart;
   while (1)
   {
 		start_time = DWT->CYCCNT;
 		
+		DelayCall(Key_Scan_Task, &key1, 10);
 		Run_Fan_Task(16);
-		Run_ShowTime_Task(100);
 		
+		DelayCall(ShowTime_Task, (void *)&Time_Task_Run, 100);
     DelayCall(ShowBATLev_Task, NULL, 3000);
     DelayCall(ShowTEMP_Task, NULL, 1000);
 		DelayCall(Show_SysTime_Task,NULL, 200);
     OLED_Refresh();
-		
 		ShowRunTime();
 		
     /* USER CODE END WHILE */
@@ -232,6 +234,19 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+//{
+//    if (huart->Instance == USART1)
+//    {
+//				printf("rx");
+//        usart_rxdate[sizeof(usart_rxdate) - 1] = '\0'; // 简化处理，假设接收满
+//        OLED_ShowString(0, 0, usart_rxdate, 16, 1);
+//        
+//        // 重新启动接收
+//        HAL_UART_Receive_IT(&huart1, usart_rxdate, sizeof(usart_rxdate));
+//    }
+//}
 
 /* USER CODE END 4 */
 
