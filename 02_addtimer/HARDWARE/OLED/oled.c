@@ -119,6 +119,15 @@ void OLED_Clear(void)
     OLED_Refresh(); // 更新显示
 }
 
+void OLED_Clear_GRAM(void)
+{
+		for (uint16_t i = 0; i < 1024; i++)
+    {
+        OLED_GRAM[i] = 0x00; // 清除所有显存
+    }
+
+}
+
 //画点 
 //x:0~127
 //y:0~63

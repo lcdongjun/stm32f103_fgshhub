@@ -21,8 +21,8 @@
 #include "bmp.h"
 
 uint16_t fan_cont = 0, bat_lev_cont = 5 , temp = 0; //风扇旋转角度，电量档位，温度
-uint32_t timer_seconds = 0;									//需要运行的时间，s
-bool Time_Task_Run = 0;											//是否开启显示运行时间
+static uint32_t timer_seconds = 0;									//需要运行的时间，s
+bool Time_Task_Run = 0;											//是否开启定时关闭
 float Real_value; 													//ADC获取的值
 
 uint8_t fan_mode = 0 , set_fan_mode = 0, Set_State = 0;		//读取的风扇档位，要设置的风扇档位，设置选项
@@ -74,26 +74,29 @@ void AllStop()
 //显示风扇开启倒计时
 void ShowTime_Task(void *arg)
 {
-	uint8_t run_flag = *(uint8_t *)arg;
-	if(Set_State ==1)
-	{
-		timer_seconds = __HAL_TIM_GET_COUNTER(&htim1);
-		OLED_ShowTimer(10, 40, timer_seconds/10, 16, 0);
-	}
-	else
-	{
-			if(run_flag == 1)
-			{
-//				timer_seconds -= counter;
-				if (timer_seconds >= 59990)
-						timer_seconds = 0;
-				OLED_ShowTimer(10, 40, (timer_seconds-counter)/10, 16, 1);
-			}
-			else
-			{
-				OLED_ShowTimer(10, 40, 0, 16, 1);
-			}
-	}
+    uint8_t run_flag = *(uint8_t *)arg;
+    uint16_t show_time = 0;
+    uint8_t invert = 0;
+
+    if (run_flag == 0) {
+        if (Set_State == 1) {
+            // 设置状态下未运行，显示当前时间
+            timer_seconds = __HAL_TIM_GET_COUNTER(&htim1);
+            show_time = timer_seconds;
+            invert = 0;
+        }
+				else{
+					invert = 1;
+				}
+    } else {
+        if (Set_State != 1) {
+            // 正常运行中，显示剩余倒计时
+            show_time = (timer_seconds > counter) ? (timer_seconds - counter) : 0;
+            invert = 1;
+        }
+    }
+
+    OLED_ShowTimer(10, 40, show_time, 16, invert);
 }
 
 //采集并显示电池电量
@@ -224,21 +227,6 @@ void Run_Fan_Task( uint16_t time_interval)
 //			__HAL_TIM_SET_COUNTER(&htim1,0);
 //		}
 //		Paint_Show_Arc(64,32,25,0,count,1,1,0,1);
-}
-
-//运行切换显示运行时间函数
-void Run_ShowTime_Task(uint16_t time_interval)
-{
-	//检测编码器按键是否按下，按下就切换显示时间状态
-//		if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0) == 1)
-//		{
-//			Time_Task_Run = !Time_Task_Run;
-//			counter = 0;
-//			(Time_Task_Run) ? HAL_TIM_Base_Start_IT(&htim2) : HAL_TIM_Base_Stop_IT(&htim2);
-//		}
-		
-		DelayCall(Key_Scan_Task, &key1, 10);
-		DelayCall(ShowTime_Task, (void *)&Time_Task_Run, time_interval);
 }
 
 void Run_Standby_Stop_Task(uint16_t time_interval)

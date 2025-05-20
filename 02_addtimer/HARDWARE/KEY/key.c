@@ -88,6 +88,7 @@ void MyKeyEventCallback(KeyEvent event)
         case KEY_EVENT_DOUBLE:
 						Set_State++;
 						Set_State%=4;
+						printf("Set_State : %d\n",Set_State);
             printf("双击\n");
             break;
         case KEY_EVENT_TRIPLE:
@@ -97,7 +98,7 @@ void MyKeyEventCallback(KeyEvent event)
 						Time_Task_Run = !Time_Task_Run;
 						counter = 0;
             (Time_Task_Run) ? HAL_TIM_Base_Start_IT(&htim2) : HAL_TIM_Base_Stop_IT(&htim2);
-            printf("长按\n");
+						printf("长按\n");
             break;
         default:
             break;
