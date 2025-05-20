@@ -267,9 +267,9 @@ void Set_Fan_State_NonBlocking(uint8_t count)
     switch(count)
 		{
         case 0: fan_target_mode = 0x07; break;
-        case 1: fan_target_mode = 0x03; break;
+        case 1: fan_target_mode = 0x06; break;
         case 2: fan_target_mode = 0x05; break;
-        case 3: fan_target_mode = 0x06; break;
+        case 3: fan_target_mode = 0x03; break;
         default: return; // Œﬁ–ß ‰»Î
     }
 
