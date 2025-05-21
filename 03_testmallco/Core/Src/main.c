@@ -46,8 +46,6 @@
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
 
-uint32_t start_time = 0;
-
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -76,40 +74,6 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 
-//显示轮询一次消耗的时间，单位是us
-static uint32_t loop_count = 0;
-static uint64_t total_elapsed_cycles = 0;
-static uint32_t last_tick = 0;
-void ShowRunTime()
-{
-	uint32_t elapsed_cycles = (DWT->CYCCNT - start_time) & 0xFFFFFFFF;
-	total_elapsed_cycles += elapsed_cycles;
-	loop_count++;
-	uint32_t current_tick = HAL_GetTick();
-	if (current_tick - last_tick >= 1000)
-	{
-			last_tick = current_tick;
-			uint32_t avg_us = (total_elapsed_cycles / loop_count)/SYSClock_MHZ;
-		if(avg_us>10000)
-		{
-			OLED_ShowString(86, 48, "T:", 8, 1);
-			OLED_ShowNum(98, 48, avg_us/1000, 4, 8, 1);
-			OLED_ShowString(122, 48, "m", 8, 1);
-		}
-		else
-		{
-			OLED_ShowString(86, 48, "T:", 8, 1);
-			OLED_ShowNum(98, 48, avg_us, 4, 8, 1);
-			OLED_ShowString(122, 48, "u", 8, 1);
-		}
-
-			total_elapsed_cycles = 0;
-			loop_count = 0;
-	}
-}
-
-uint8_t usart_rxdate[8] = {0};
-//uint16_t len = 8;
 /* USER CODE END 0 */
 
 /**
@@ -173,18 +137,17 @@ int main(void)
 //	Show_SysTime_Task(NULL);
   while (1)
   {
-		start_time = DWT->CYCCNT;
-		
-		DelayCall(Key_Scan_Task, &key1, 10);
-		DelayCall(EncoderSpeed_Update, &encoder1, 10);
-		DelayCall(Fan_Scan_Task,(void *)&fan1,5);
+		DelayCall(Key_Scan_Task, &key1, 5);
+		DelayCall(EncoderSpeed_Update, &encoder1, 5);
+		DelayCall(Fan_Scan_Task,(void *)&fan1,50);
 		Run_Fan_Task(16);
 //    DelayCall(ShowBATLev_Task, NULL, 3000);
 //    DelayCall(ShowTEMP_Task, NULL, 1000);
 //		DelayCall(Show_SysTime_Task,NULL, 200);
-		DelayCall(UI_DrawAll,NULL,16);
-    OLED_Refresh();
-		ShowRunTime();
+		DelayCall(UI_DrawAll,NULL,0);
+//		UI_DrawAll(NULL);
+//    OLED_Refresh();
+//		ShowRunTime();
 		
     /* USER CODE END WHILE */
 
@@ -243,18 +206,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-//void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-//{
-//    if (huart->Instance == USART1)
-//    {
-//				printf("rx");
-//        usart_rxdate[sizeof(usart_rxdate) - 1] = '\0'; // 简化处理，假设接收满
-//        OLED_ShowString(0, 0, usart_rxdate, 16, 1);
-//        
-//        // 重新启动接收
-//        HAL_UART_Receive_IT(&huart1, usart_rxdate, sizeof(usart_rxdate));
-//    }
-//}
+
 
 /* USER CODE END 4 */
 

@@ -31,10 +31,6 @@ bool Time_Task_Run = 0;											//是否开启定时关闭
 float Real_value; 													//ADC获取的值
 
 uint8_t fan_mode = 0 , set_fan_mode = 0, Set_State = 0;		//读取的风扇档位，要设置的风扇档位，设置选项
-static FanSetState fan_set_state = FAN_IDLE;//风扇设置档位的状态
-static uint32_t fan_timer = 0;							//开始设置风扇档位的时间
-static uint8_t fan_target_mode = 0;					//要设置的档位，使用二进制 000	001	010	100			
-static uint8_t fan_retry_count = 0;					//重复尝试设置的次数
 
 
 void AllInit()
@@ -168,41 +164,8 @@ void ShowFAN_Task(void *arg)
 //		OLED_ShowNum(24,1, delay_cont, 2, 12, 1);
 //    OLED_ShowString(1,1, "T:", 12, 1);
 
-//显示当前系统运行时间
-void Show_SysTime_Task(void *arg)
-{
-		RTC_TimeTypeDef sTime = {0};
-    RTC_DateTypeDef sDate = {0};
-    static uint32_t last_seconds = 0;
-    char time_str[12] = {0};
-		//获取RTC时间
-		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-		
-		//计算运行时间
-		uint32_t total_seconds = sTime.Hours * 3600 + sTime.Minutes * 60 + sTime.Seconds;
-		
-		//只有当时间发生改变才刷新显示
-		if(total_seconds != last_seconds)
-		{
-				last_seconds = total_seconds;
-				if(sTime.Hours<10)
-				{
-					snprintf(time_str, sizeof(time_str), "%01d:%02d:%02d", 
-					sTime.Hours, sTime.Minutes, sTime.Seconds);
-					OLED_ShowString(0, 0, (uint8_t *)time_str, 12, 1);
-				}
-				else
-				{
-					snprintf(time_str, sizeof(time_str), "%02d:%02dm", 
-					sTime.Hours, sTime.Minutes);
-					OLED_ShowString(0, 0, (uint8_t *)time_str, 12, 1);
-				}
-		}
-}
 
 int32_t count = 0;
-uint8_t frame_index  = 0;
 //运行获取编码器值来切换风扇档位
 void Run_Fan_Task( uint16_t time_interval)
 {
@@ -220,6 +183,7 @@ void Run_Fan_Task( uint16_t time_interval)
 	}
 	
 		fan1_display.level = count;
+		count?(fan1_display.pause=0):(fan1_display.pause=1);
 		//显示风扇档位
 		DelayCall(FanFrameUpdate, &fan1_display, time_interval);
 }
@@ -232,57 +196,4 @@ void Run_Standby_Stop_Task(uint16_t time_interval)
 			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
 			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
 			HAL_PWR_EnterSTANDBYMode();
-}
-
-//获取风扇的档位
-void Get_GPIO_State()
-{
-	fan_mode = 0;
-	fan_mode |= HAL_GPIO_ReadPin(L1_GPIO_Port,L1_Pin);
-	fan_mode |= HAL_GPIO_ReadPin(L2_GPIO_Port,L2_Pin)<<1;
-	fan_mode |= HAL_GPIO_ReadPin(L3_GPIO_Port,L3_Pin)<<2;
-	printf("fan_mode : 0X%X \r\n",fan_mode);
-}
-
-//设置风扇的档位
-void Set_Fan_State_NonBlocking(uint8_t count)
-{
-    switch(count)
-		{
-        case 0: fan_target_mode = 0x07; break;
-        case 1: fan_target_mode = 0x06; break;
-        case 2: fan_target_mode = 0x05; break;
-        case 3: fan_target_mode = 0x03; break;
-        default: return; // 无效输入
-    }
-
-    fan_set_state = FAN_SETTING;
-    fan_timer = HAL_GetTick();  // 记录当前时间
-    fan_retry_count = 0;
-}
-
-void Process_Fan_Set(void)
-{
-    if (fan_set_state == FAN_SETTING)
-    {
-        if ((HAL_GetTick() - fan_timer) >= 40)  // 每40ms尝试一次
-        {
-            Get_GPIO_State();
-            if (fan_mode == fan_target_mode) {
-                printf("Set Fan Mode %d OK\r\n", fan_target_mode);
-                fan_set_state = FAN_IDLE;
-                set_fan_mode = 0;
-            } else {
-                HAL_GPIO_WritePin(KEY1_GPIO_Port, KEY1_Pin, GPIO_PIN_RESET);
-                HAL_Delay(60);
-                HAL_GPIO_WritePin(KEY1_GPIO_Port, KEY1_Pin, GPIO_PIN_SET);
-                fan_timer = HAL_GetTick();
-                fan_retry_count++;
-                if (fan_retry_count > 10) {
-                    printf("Failed to set fan mode %d\r\n", fan_target_mode);
-                    fan_set_state = FAN_IDLE;
-                }
-            }
-        }
-    }
 }
