@@ -26,6 +26,7 @@ void OLED_DisPlay_Off(void);
 void OLED_Refresh(void);
 void OLED_Clear(void);
 void OLED_Clear_GRAM(void);
+void OLED_Clear_Area(uint8_t x_start, uint8_t y_start, uint8_t width, uint8_t height);
 void OLED_DrawPoint(u8 x,u8 y,u8 t);
 void OLED_DrawLine(u8 x1,u8 y1,u8 x2,u8 y2,u8 mode);
 void OLED_DrawCircle(u8 x,u8 y,u8 r);

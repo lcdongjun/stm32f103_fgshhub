@@ -125,7 +125,29 @@ void OLED_Clear_GRAM(void)
     {
         OLED_GRAM[i] = 0x00; // 清除所有显存
     }
+}
 
+void OLED_Clear_Area(uint8_t x_start, uint8_t y_start, uint8_t width, uint8_t height)
+{
+    if (x_start >= 128 || y_start >= 64 || width == 0 || height == 0)
+        return;
+
+    uint8_t x_end = x_start + width;
+    uint8_t y_end = y_start + height;
+
+    if (x_end > 128) x_end = 128;
+    if (y_end > 64) y_end = 64;
+
+    for (uint8_t y = y_start; y < y_end; y++)
+    {
+        uint8_t page = y / 8;
+        uint8_t bit_mask = 1 << (y % 8);
+
+        for (uint8_t x = x_start; x < x_end; x++)
+        {
+            OLED_GRAM[x + page * 128] &= ~bit_mask;
+        }
+    }
 }
 
 //画点 

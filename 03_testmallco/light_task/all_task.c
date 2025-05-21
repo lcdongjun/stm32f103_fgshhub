@@ -77,27 +77,30 @@ void ShowTime_Task(void *arg)
 {
     uint8_t run_flag = *(uint8_t *)arg;
     uint16_t show_time = 0;
-    uint8_t invert = 0;
 
     if (run_flag == 0) {
         if (Set_State == 1) {
             // 设置状态下未运行，显示当前时间
             timer_seconds = __HAL_TIM_GET_COUNTER(&htim1);
             show_time = timer_seconds;
-            invert = 0;
+						fantimeset.stop_seconds = show_time;
+						fantimeset.show_settime = 1;
+						UI_EnableTwinkle(&fantimeset_element, 1, 300); 
         }
 				else{
-					invert = 1;
+					fantimeset.total_seconds = timer_seconds;
+					fantimeset.show_settime = 0;
+					UI_EnableTwinkle(&fantimeset_element, 0, 0); 
 				}
     } else {
         if (Set_State != 1) {
             // 正常运行中，显示剩余倒计时
             show_time = (timer_seconds > counter) ? (timer_seconds - counter) : 0;
-            invert = 1;
+						fantimeset.total_seconds = show_time;
+						fantimeset.show_settime = 0;
+						UI_EnableTwinkle(&fantimeset_element, 0, 0); 
         }
     }
-
-    OLED_ShowTimer(10, 40, show_time, 16, invert);
 }
 
 //采集并显示电池电量
@@ -130,44 +133,10 @@ void ShowTEMP_Task(void *arg)
   OLED_ShowPicture(72,4,12,12,TEMP_C,1);
 }
 
-//根据编码器显示风扇档数
-void ShowFAN_Task(void *arg)
-{
-		
-    uint8_t level = *(uint8_t *)arg;
-    static uint8_t frame_skip_counter = 0;
-    uint8_t speed_factor = 4 - level;
-    frame_skip_counter++;
-    if (frame_skip_counter >= speed_factor && level != 0) {
-        frame_skip_counter = 0;
-        fan_cont++;
-        fan_cont %= 6;
-    }
-    ShowFanStatus(11, 18, level, fan_cont);
-}
-
-//用于测试不阻塞延时
-//	//提供创建一个不阻塞的延时的示范程序
-//		static NonBlockingDelay delay;
-//		static uint16_t delay_cont = 0;
-//    if (!delay.active) {
-//        DelayStart(&delay, 1000);
-//        return;
-//    }
-
-//    if (!DelayIsExpired(&delay)) {
-//        return;
-//    }
-//		
-//		delay_cont++;
-//		delay_cont%=99;
-//		OLED_ShowNum(24,1, delay_cont, 2, 12, 1);
-//    OLED_ShowString(1,1, "T:", 12, 1);
-
 
 int32_t count = 0;
 //运行获取编码器值来切换风扇档位
-void Run_Fan_Task( uint16_t time_interval)
+void Run_Fan_Task(void)
 {
 	//获取编码器的值，除以12来消抖
 	if(Set_State == 0)
@@ -184,8 +153,6 @@ void Run_Fan_Task( uint16_t time_interval)
 	
 		fan1_display.level = count;
 		count?(fan1_display.pause=0):(fan1_display.pause=1);
-		//显示风扇档位
-		DelayCall(FanFrameUpdate, &fan1_display, time_interval);
 }
 
 void Run_Standby_Stop_Task(uint16_t time_interval)

@@ -140,15 +140,13 @@ int main(void)
 		DelayCall(Key_Scan_Task, &key1, 5);
 		DelayCall(EncoderSpeed_Update, &encoder1, 5);
 		DelayCall(Fan_Scan_Task,(void *)&fan1,50);
-		Run_Fan_Task(16);
+		
+		DelayCall(ShowTime_Task,(void *)&Time_Task_Run,10);
+		Run_Fan_Task();
 //    DelayCall(ShowBATLev_Task, NULL, 3000);
 //    DelayCall(ShowTEMP_Task, NULL, 1000);
-//		DelayCall(Show_SysTime_Task,NULL, 200);
-		DelayCall(UI_DrawAll,NULL,0);
-//		UI_DrawAll(NULL);
-//    OLED_Refresh();
-//		ShowRunTime();
-		
+		UI_UpdateAll();
+		UI_DrawAll(NULL); 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

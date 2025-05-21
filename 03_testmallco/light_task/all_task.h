@@ -14,8 +14,9 @@ extern uint8_t fan_mode, set_fan_mode ,Set_State;		//¶ÁÈ¡µÄ·çÉÈµµÎ»£¬ÒªÉèÖÃµÄ·çÉ
 void ShowBATLev_Task(void *arg);
 void ShowTEMP_Task(void *arg);
 void ShowFAN_Task(void *arg);
+void ShowTime_Task(void *arg);
 
-void Run_Fan_Task( uint16_t time_interval);
+void Run_Fan_Task(void);
 
 
 #endif
