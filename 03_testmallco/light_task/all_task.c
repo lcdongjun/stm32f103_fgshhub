@@ -97,6 +97,14 @@ void ShowTime_Task(void *arg)
         if (Set_State != 2) {
             // 正常运行中，显示剩余倒计时
             show_time = (timer_seconds > counter) ? (timer_seconds - counter) : 0;
+						if(show_time == 1)
+						{
+							Time_Task_Run = 0;
+							counter = 0;
+							HAL_TIM_Base_Stop_IT(&htim2);
+							Set_Fan_State(&fan1,FAN_MODE0);
+							
+						}
 						fantimeset.total_seconds = show_time;
 						fantimeset.show_settime = 0;
 
@@ -131,7 +139,7 @@ void Run_Fan_Task(void)
 {
 	static uint32_t run_fan_task_last_tik = 0;
 	//获取编码器的值，除以12来消抖
-	if(Set_State == 0 || Set_State == 1)
+	if(Set_State == 1)//Set_State == 0 || 
 	{
 		if(HAL_GetTick()-run_fan_task_last_tik>=100)
 		{

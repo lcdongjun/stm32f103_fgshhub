@@ -141,7 +141,6 @@ int main(void)
 		
 		DelayCall(ShowTime_Task,(void *)&Time_Task_Run,10);
 		Run_Fan_Task();
-
 //    DelayCall(ShowBATLev_Task, NULL, 3000);
 		DelayCall(UI_UpdateAll,NULL,0);
 		DelayCall(UI_DrawAll,NULL,16);

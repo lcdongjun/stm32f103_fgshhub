@@ -3,7 +3,7 @@
 <title>Static Call Graph - [test\test.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image test\test.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu May 22 19:57:07 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu May 22 23:50:09 2025
 <BR><P>
 <H3>Maximum Stack Usage =        184 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1109,7 +1109,8 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[dd]"></a>HAL_TIM_Base_Stop_IT</STRONG> (Thumb, 62 bytes, Stack size 0 bytes, stm32f1xx_hal_tim.o(i.HAL_TIM_Base_Stop_IT))
-<BR><BR>[Called By]<UL><LI><a href="#[2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MyKeyEventCallback
+<BR><BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ShowTime_Task
+<LI><a href="#[2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MyKeyEventCallback
 </UL>
 
 <P><STRONG><a name="[ba]"></a>HAL_TIM_ConfigClockSource</STRONG> (Thumb, 268 bytes, Stack size 24 bytes, stm32f1xx_hal_tim.o(i.HAL_TIM_ConfigClockSource))
@@ -1473,7 +1474,7 @@ Global Symbols
 <P><STRONG><a name="[15]"></a>PendSV_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f1xx_it.o(i.PendSV_Handler))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f103x6.o(RESET)
 </UL>
-<P><STRONG><a name="[ef]"></a>Run_Fan_Task</STRONG> (Thumb, 136 bytes, Stack size 8 bytes, all_task.o(i.Run_Fan_Task))
+<P><STRONG><a name="[ef]"></a>Run_Fan_Task</STRONG> (Thumb, 130 bytes, Stack size 8 bytes, all_task.o(i.Run_Fan_Task))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = Run_Fan_Task &rArr; Set_Fan_State
 </UL>
 <BR>[Calls]<UL><LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_Fan_State
@@ -1490,7 +1491,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 </UL>
-<BR>[Called By]<UL><LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Run_Fan_Task
+<BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ShowTime_Task
+<LI><a href="#[ef]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Run_Fan_Task
 </UL>
 
 <P><STRONG><a name="[76]"></a>ShowFanStatus</STRONG> (Thumb, 382 bytes, Stack size 32 bytes, ui_comp.o(i.ShowFanStatus))
@@ -1544,8 +1546,11 @@ Global Symbols
 <LI><a href="#[b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;TempDisplayAndSetElement
 </UL>
 
-<P><STRONG><a name="[4a]"></a>ShowTime_Task</STRONG> (Thumb, 114 bytes, Stack size 16 bytes, all_task.o(i.ShowTime_Task))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = ShowTime_Task
+<P><STRONG><a name="[4a]"></a>ShowTime_Task</STRONG> (Thumb, 148 bytes, Stack size 16 bytes, all_task.o(i.ShowTime_Task))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = ShowTime_Task &rArr; Set_Fan_State
+</UL>
+<BR>[Calls]<UL><LI><a href="#[f0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Set_Fan_State
+<LI><a href="#[dd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_TIM_Base_Stop_IT
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
