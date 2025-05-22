@@ -1,5 +1,6 @@
 #include "ds18b20.h"
 #include "delay.h"
+#include "light_ui.h"
 
 //复位DS18B20
 void DS18B20_Rst(void)	   
@@ -123,9 +124,9 @@ u8 DS18B20_Init(void)
 //从ds18b20得到温度值
 //精度：0.1C
 //返回值：温度值 （-550~1250） 
-short DS18B20_Get_Temp(void)
+float DS18B20_Get_Temp(void)
 {
-    u8 temp;
+    float temp;
     u8 TL,TH;
     short tem;
     DS18B20_Start ();           //开始转换
@@ -148,3 +149,9 @@ short DS18B20_Get_Temp(void)
 	if(temp)return tem; //返回温度值
 	else return -tem;    
 }
+
+void	Temp_Scan_Task(void *arg)
+{
+	temp_display.temp = DS18B20_Get_Temp()/10;
+}
+

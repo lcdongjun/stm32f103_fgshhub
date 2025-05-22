@@ -44,7 +44,8 @@ void Key_Scan_Task(void *arg)
                 key->last_tick = now;
             } else if ((now - key->last_tick) >= LONG_PRESS_TIME && !key->long_press_reported) {
                 key->long_press_reported = 1;
-                key->callback(KEY_EVENT_LONG);
+								key->event = KEY_EVENT_LONG;
+                key->callback(key->event);
                 key->click_count = 0;
             }
             break;
@@ -68,9 +69,9 @@ void Key_Scan_Task(void *arg)
     // ÅÐ¶Ï¶à»÷
     if (!key->pressed && key->click_count > 0 && (now - key->last_tick) > CLICK_INTERVAL) {
         switch (key->click_count) {
-            case 1: key->callback(KEY_EVENT_SINGLE); break;
-            case 2: key->callback(KEY_EVENT_DOUBLE); break;
-            case 3: key->callback(KEY_EVENT_TRIPLE); break;
+            case 1: key->event =  KEY_EVENT_SINGLE; key->callback(key->event); break;
+            case 2: key->event =  KEY_EVENT_DOUBLE; key->callback(key->event); break;
+            case 3: key->event =  KEY_EVENT_TRIPLE; key->callback(key->event); break;
         }
         key->click_count = 0;
     }

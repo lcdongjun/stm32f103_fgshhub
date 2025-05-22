@@ -61,7 +61,7 @@ UIElement fan1_element = {
     .name = "fan1",
     .x = 11,
     .y = 18,
-    .width = 102,
+    .width = 114,
     .height = 24,
     .font_size = 0,
     .visible = 1,
@@ -89,6 +89,7 @@ UIElement runtime_element = {
     .font_size = 0,
     .visible = 1,
     .draw_func = ShowRunTimeElement,
+		.update_func = ShowRunTimeFrameUpdate,
     .data = &runtime
 };
 
@@ -133,6 +134,42 @@ UIElement fantimeset_element = {
     .data = &fantimeset
 };
 
+//创建显示温度组件
+DisplayData temp_display = {
+    .x = 42,
+    .y = 3,
+		.pause = 0
+};
+
+UIElement temp_element = {
+    .name = "temp",
+    .x = 42,
+    .y = 3,
+    .width = 42,
+    .height = 16,
+    .font_size = 0,
+    .visible = 1,
+    .draw_func = TempDisplayAndSetElement,
+		.update_func = TempDisplayAndSetFrameUpdate,
+    .data = &temp_display,
+
+};
+
+
+//注册显示和设置温度组件
+void TempDisplayAndSetElement(void *date)
+{
+	DisplayData *temp_display = (DisplayData *)date;
+	ShowTemp(temp_display->x,temp_display->y,temp_display->temp);
+}
+
+//更新显示和设置温度组件
+void TempDisplayAndSetFrameUpdate(void *arg)
+{
+		DisplayData *temp_display = (DisplayData *)arg;
+		ShowTemp(temp_display->x,temp_display->y,temp_display->temp);
+}
+
 //注册设置风扇运行时间的显示组件
 void FanTimeSetElement(void *date)
 {
@@ -153,6 +190,12 @@ void ShowRunTimeElement(void *date)
 	ShowRunTime(runtime->x,runtime->y);
 }
 
+//更新循环耗时显示组件
+void ShowRunTimeFrameUpdate(void *arg)
+{
+    DisplayData *runtime = (DisplayData *)arg;
+		ShowRunTime(runtime->x,runtime->y);
+}
 //注册系统运行时间显示组件
 void ShowSysTimeElement(void *date)
 {
@@ -198,9 +241,10 @@ void UI_Setup_All(void)
 		UI_Register(&runtime_element);
 		UI_Register(&systime_element);
 		UI_Register(&fantimeset_element);
+		UI_Register(&temp_element);
 }
 
-void UI_UpdateAll(void)
+void UI_UpdateAll(void *arg)
 {
     uint32_t now = HAL_GetTick();
 

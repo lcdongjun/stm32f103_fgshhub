@@ -32,6 +32,7 @@ typedef struct {
     uint8_t click_count;
     uint8_t pressed;
     uint8_t long_press_reported;
+		KeyEvent event;
     void (*callback)(KeyEvent);
 } KeyHandle;
 

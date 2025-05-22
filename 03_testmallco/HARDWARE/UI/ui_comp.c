@@ -117,13 +117,13 @@ void OLED_FanTimeSet(u8 x, u8 y, u32 total_seconds, u32 stop_seconds, u8 show_se
 		{
 			snprintf(time_str, sizeof(time_str), "%02d:%02ds", 
 			seconds/60,seconds%60);
-			OLED_ShowString(x+24, y+4, (uint8_t *)time_str, 16, mode);
+			OLED_ShowString(x+24, y+4, (uint8_t *)time_str, size, mode);
 		}
 		else
 		{
 			snprintf(time_str, sizeof(time_str), "%02d:%02dm", 
 			seconds/3600,(seconds%3600)/60);
-			OLED_ShowString(x+24+48, y+4, (uint8_t *)time_str, 16, mode);
+			OLED_ShowString(x+24, y+4, (uint8_t *)time_str, size, mode);
 		}
 		
 }
@@ -197,3 +197,14 @@ void Show_SysTime(u8 x, u8 y)
 				}
 		}
 }
+
+//ÏÔÊ¾ÎÂ¶È
+void ShowTemp(u8 x,u8 y,u8 temp)
+{
+
+  OLED_ShowPicture(x,y,16,16,TEMP_ICO,1);
+  OLED_ShowNum(x+14,y-1,temp,2,16,1);
+  OLED_ShowPicture(x+14+16,y+1,12,12,TEMP_C,1);
+
+}
+

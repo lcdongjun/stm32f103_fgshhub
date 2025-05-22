@@ -2,7 +2,7 @@ Dependencies for Project 'test', Target 'test': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
 F (startup_stm32f103x6.s)(0x682A7B28)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include--pd "__UVISION_VERSION SETA 541" --pd "STM32F10X_LD SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f103x6.lst --xref -o test\startup_stm32f103x6.o --depend test\startup_stm32f103x6.d)
 F (..\light_task\light_task.c)(0x68283F09)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\light_task.o --omf_browse test\light_task.crf --depend test\light_task.d)
-I (..\light_task\light_task.h)(0x68299030)
+I (..\light_task\light_task.h)(0x682EE0CA)
 I (../Core/Inc/main.h)(0x682AD478)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x68246442)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x68283F08)
@@ -42,7 +42,7 @@ I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5F63877C)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5F63878A)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5F63877C)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
-I (..\Drivers\MALLOC\malloc.h)(0x682ADADD)
+I (../Drivers/MALLOC/malloc.h)(0x682ADADD)
 F (..\Core\Src\delay.c)(0x682873AC)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\delay.o --omf_browse test\delay.crf --depend test\delay.d)
 I (../Core/Inc/delay.h)(0x682873AC)
 I (../Core/Inc/main.h)(0x682AD478)
@@ -85,8 +85,8 @@ I (D:\keil5\ARM\ARMCC\include\string.h)(0x5F63878A)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5F63877C)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
 I (..\Drivers\MALLOC\malloc.h)(0x682ADADD)
-F (..\light_task\all_task.c)(0x682DA151)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\all_task.o --omf_browse test\all_task.crf --depend test\all_task.d)
-I (..\light_task\all_task.h)(0x682DA151)
+F (..\light_task\all_task.c)(0x682EF12C)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\all_task.o --omf_browse test\all_task.crf --depend test\all_task.d)
+I (..\light_task\all_task.h)(0x682EDD99)
 I (../Core/Inc/main.h)(0x682AD478)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x68246442)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x68283F08)
@@ -136,16 +136,16 @@ I (../Core/Inc/tim.h)(0x68283F08)
 I (../Core/Inc/usart.h)(0x68283F08)
 I (../Core/Inc/gpio.h)(0x68283F08)
 I (../Core/Inc/delay.h)(0x682873AC)
-I (../HARDWARE/DS18B20/ds18b20.h)(0x68283F09)
-I (..\light_task\light_task.h)(0x68299030)
-I (../HARDWARE/UI/light_ui.h)(0x682D9C9C)
-I (../HARDWARE/UI/ui_comp.h)(0x682D8A4F)
+I (../HARDWARE/DS18B20/ds18b20.h)(0x682EDA34)
+I (..\light_task\light_task.h)(0x682EE0CA)
+I (../HARDWARE/UI/light_ui.h)(0x682EE01C)
+I (../HARDWARE/UI/ui_comp.h)(0x682ED359)
 I (../HARDWARE/OLED/oled.h)(0x682D8A4F)
 I (../HARDWARE/OLED/bmp.h)(0x68287B53)
-I (../HARDWARE/KEY/key.h)(0x68299030)
+I (../HARDWARE/KEY/key.h)(0x682ECA32)
 I (../HARDWARE/FAN/fan.h)(0x682C67CD)
 I (../HARDWARE/ENCODER/encoder.h)(0x682D1A09)
-F (..\light_task\all_task.h)(0x682DA151)()
+F (..\light_task\all_task.h)(0x682EDD99)()
 F (..\Core\Src\it_callback.c)(0x6829D583)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\it_callback.o --omf_browse test\it_callback.crf --depend test\it_callback.d)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
 I (../Core/Inc/main.h)(0x682AD478)
@@ -230,7 +230,7 @@ I (D:\keil5\ARM\ARMCC\include\string.h)(0x5F63878A)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5F63877C)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
 I (../Drivers/MALLOC/malloc.h)(0x682ADADD)
-F (../Core/Src/main.c)(0x682DA284)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\main.o --omf_browse test\main.crf --depend test\main.d)
+F (../Core/Src/main.c)(0x682F1112)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\main.o --omf_browse test\main.crf --depend test\main.d)
 I (../Core/Inc/main.h)(0x682AD478)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x68246442)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x68283F08)
@@ -280,12 +280,12 @@ I (../Core/Inc/tim.h)(0x68283F08)
 I (../Core/Inc/usart.h)(0x68283F08)
 I (../Core/Inc/gpio.h)(0x68283F08)
 I (../Core/Inc/delay.h)(0x682873AC)
-I (../light_task/light_task.h)(0x68299030)
-I (../HARDWARE/UI/light_ui.h)(0x682D9C9C)
-I (../HARDWARE/DS18B20/ds18b20.h)(0x68283F09)
+I (../light_task/light_task.h)(0x682EE0CA)
+I (../HARDWARE/UI/light_ui.h)(0x682EE01C)
+I (../HARDWARE/DS18B20/ds18b20.h)(0x682EDA34)
 I (../HARDWARE/OLED/oled.h)(0x682D8A4F)
-I (../light_task/all_task.h)(0x682DA151)
-I (../HARDWARE/KEY/key.h)(0x68299030)
+I (../light_task/all_task.h)(0x682EDD99)
+I (../HARDWARE/KEY/key.h)(0x682ECA32)
 I (../HARDWARE/FAN/fan.h)(0x682C67CD)
 I (../HARDWARE/ENCODER/encoder.h)(0x682D1A09)
 F (../Core/Src/gpio.c)(0x682D1A09)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\gpio.o --omf_browse test\gpio.crf --depend test\gpio.d)
@@ -1466,8 +1466,8 @@ I (../Core/Inc/it_callback.h)(0x6829D54F)
 I (../Drivers/MALLOC/malloc.h)(0x682ADADD)
 I (..\HARDWARE\OLED\oledfont.h)(0x682ADF7F)
 I (../Core/Inc/spi.h)(0x68283F08)
-F (..\HARDWARE\DS18B20\ds18b20.c)(0x68283F09)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\ds18b20.o --omf_browse test\ds18b20.crf --depend test\ds18b20.d)
-I (..\HARDWARE\DS18B20\ds18b20.h)(0x68283F09)
+F (..\HARDWARE\DS18B20\ds18b20.c)(0x682EDA71)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\ds18b20.o --omf_browse test\ds18b20.crf --depend test\ds18b20.d)
+I (..\HARDWARE\DS18B20\ds18b20.h)(0x682EDA34)
 I (../Core/Inc/main.h)(0x682AD478)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x68246442)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x68283F08)
@@ -1507,8 +1507,9 @@ I (D:\keil5\ARM\ARMCC\include\stdlib.h)(0x5F63877C)
 I (D:\keil5\ARM\ARMCC\include\string.h)(0x5F63878A)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5F63877C)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
-I (..\Drivers\MALLOC\malloc.h)(0x682ADADD)
+I (../Drivers/MALLOC/malloc.h)(0x682ADADD)
 I (../Core/Inc/delay.h)(0x682873AC)
+I (../HARDWARE/UI/light_ui.h)(0x682EE01C)
 F (..\HARDWARE\OLED\bmp.c)(0x68287B14)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\bmp.o --omf_browse test\bmp.crf --depend test\bmp.d)
 I (..\HARDWARE\OLED\bmp.h)(0x68287B53)
 I (../Core/Inc/main.h)(0x682AD478)
@@ -1551,8 +1552,8 @@ I (D:\keil5\ARM\ARMCC\include\string.h)(0x5F63878A)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5F63877C)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
 I (..\Drivers\MALLOC\malloc.h)(0x682ADADD)
-F (..\HARDWARE\KEY\key.c)(0x682D1A09)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\key.o --omf_browse test\key.crf --depend test\key.d)
-I (..\HARDWARE\KEY\key.h)(0x68299030)
+F (..\HARDWARE\KEY\key.c)(0x682ECAA1)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\key.o --omf_browse test\key.crf --depend test\key.d)
+I (..\HARDWARE\KEY\key.h)(0x682ECA32)
 I (../Core/Inc/main.h)(0x682AD478)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x68246442)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x68283F08)
@@ -1594,10 +1595,10 @@ I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5F63877C)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
 I (../Drivers/MALLOC/malloc.h)(0x682ADADD)
 I (../Core/Inc/tim.h)(0x68283F08)
-I (../light_task/light_task.h)(0x68299030)
-I (../light_task/all_task.h)(0x682DA151)
-F (..\HARDWARE\KEY\key.h)(0x68299030)()
-F (..\HARDWARE\ENCODER\encoder.c)(0x682D1A09)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\encoder.o --omf_browse test\encoder.crf --depend test\encoder.d)
+I (../light_task/light_task.h)(0x682EE0CA)
+I (../light_task/all_task.h)(0x682EDD99)
+F (..\HARDWARE\KEY\key.h)(0x682ECA32)()
+F (..\HARDWARE\ENCODER\encoder.c)(0x682EE953)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\encoder.o --omf_browse test\encoder.crf --depend test\encoder.d)
 I (..\HARDWARE\ENCODER\encoder.h)(0x682D1A09)
 I (../Core/Inc/main.h)(0x682AD478)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x68246442)
@@ -1684,8 +1685,8 @@ I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5F63877C)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
 I (../Drivers/MALLOC/malloc.h)(0x682ADADD)
 F (..\HARDWARE\FAN\fan.h)(0x682C67CD)()
-F (..\HARDWARE\UI\light_ui.c)(0x682D9F48)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\light_ui.o --omf_browse test\light_ui.crf --depend test\light_ui.d)
-I (..\HARDWARE\UI\light_ui.h)(0x682D9C9C)
+F (..\HARDWARE\UI\light_ui.c)(0x682EE02F)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\light_ui.o --omf_browse test\light_ui.crf --depend test\light_ui.d)
+I (..\HARDWARE\UI\light_ui.h)(0x682EE01C)
 I (../Core/Inc/main.h)(0x682AD478)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x68246442)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x68283F08)
@@ -1726,12 +1727,12 @@ I (D:\keil5\ARM\ARMCC\include\string.h)(0x5F63878A)
 I (D:\keil5\ARM\ARMCC\include\stdbool.h)(0x5F63877C)
 I (../Core/Inc/it_callback.h)(0x6829D54F)
 I (../Drivers/MALLOC/malloc.h)(0x682ADADD)
-I (../light_task/light_task.h)(0x68299030)
-I (..\HARDWARE\UI\ui_comp.h)(0x682D8A4F)
+I (../light_task/light_task.h)(0x682EE0CA)
+I (..\HARDWARE\UI\ui_comp.h)(0x682ED359)
 I (../HARDWARE/OLED/oled.h)(0x682D8A4F)
 I (../HARDWARE/OLED/bmp.h)(0x68287B53)
-F (..\HARDWARE\UI\ui_comp.c)(0x682D9C9C)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\ui_comp.o --omf_browse test\ui_comp.crf --depend test\ui_comp.d)
-I (..\HARDWARE\UI\ui_comp.h)(0x682D8A4F)
+F (..\HARDWARE\UI\ui_comp.c)(0x682ED908)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/MALLOC -I ../light_task -I ../HARDWARE/OLED -I ../HARDWARE/DS18B20 -I ../HARDWARE/KEY -I ../HARDWARE/UI -I ../HARDWARE/ENCODER -I ../HARDWARE/FAN-I.\RTE\_test-ID:\keil5\ARM\PACK\ARM\CMSIS\6.1.0\CMSIS\Core\Include-ID:\keil5\ARM\PACK\Keil\STM32F1xx_DFP\2.4.1\Device\Include-D__UVISION_VERSION="541" -DSTM32F10X_LD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103x6-o test\ui_comp.o --omf_browse test\ui_comp.crf --depend test\ui_comp.d)
+I (..\HARDWARE\UI\ui_comp.h)(0x682ED359)
 I (../Core/Inc/main.h)(0x682AD478)
 I (../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h)(0x68246442)
 I (../Core/Inc/stm32f1xx_hal_conf.h)(0x68283F08)

@@ -46,7 +46,8 @@ typedef struct {
     uint8_t frame_index;   // 动画帧序号
     uint16_t x, y;          // 坐标
 		uint8_t pause;					//是否暂停运行
-		uint32_t last_tick;
+		uint32_t last_tick;			//上一次的tick
+		float temp;						//获取的温度     代码有点狗屎，暂时在这里传底层参数
 } DisplayData;
 
 typedef struct {
@@ -72,7 +73,11 @@ extern UIElement runtime_element;//注册的显示耗时的组件
 extern DisplayData fan1_display;//建立的风扇数据
 extern UIElement fan1_element;		//注册的风扇组件
 
-void UI_UpdateAll(void);
+//创建显示温度组件
+extern DisplayData temp_display;
+extern UIElement temp_element;
+
+void UI_UpdateAll(void *arg);
 // 注册一个 UI 元素
 void UI_Register(UIElement *elem);
 // 绘制所有可见元素
@@ -85,6 +90,8 @@ void UI_Init(void);
 void UI_Setup_All(void);
 //创建循环耗时显示组件
 void ShowRunTimeElement(void *date);
+//更新循环耗时显示组件
+void ShowRunTimeFrameUpdate(void *arg);
 //注册系统运行时间显示组件
 void ShowSysTimeElement(void *date);
 //更新设置风扇运行时间的组件
@@ -95,6 +102,10 @@ void DrawFanElement(void *data);
 void FanFrameUpdate(void *arg);
 //注册设置风扇运行时间的显示组件
 void FanTimeSetElement(void *date);
+//更新显示和设置温度组件
+void TempDisplayAndSetFrameUpdate(void *arg);
+//注册显示和设置温度组件
+void TempDisplayAndSetElement(void *date);
 //设置闪烁
 void UI_EnableTwinkle(UIElement *elem, uint8_t enable, uint32_t interval);
 

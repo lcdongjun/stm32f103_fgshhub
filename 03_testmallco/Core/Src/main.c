@@ -130,23 +130,21 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-//	ShowTime_Task(NULL);
-//	ShowBATLev_Task(NULL);
-//	ShowTEMP_Task(NULL);
-//	ShowFAN_Task(NULL);
-//	Show_SysTime_Task(NULL);
+	
   while (1)
   {
 		DelayCall(Key_Scan_Task, &key1, 5);
 		DelayCall(EncoderSpeed_Update, &encoder1, 5);
 		DelayCall(Fan_Scan_Task,(void *)&fan1,50);
+		DelayCall(Temp_Scan_Task,NULL,1000);
+		DelayCall(Twinkle,NULL,50);
 		
 		DelayCall(ShowTime_Task,(void *)&Time_Task_Run,10);
 		Run_Fan_Task();
+
 //    DelayCall(ShowBATLev_Task, NULL, 3000);
-//    DelayCall(ShowTEMP_Task, NULL, 1000);
-		UI_UpdateAll();
-		UI_DrawAll(NULL); 
+		DelayCall(UI_UpdateAll,NULL,0);
+		DelayCall(UI_DrawAll,NULL,16);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

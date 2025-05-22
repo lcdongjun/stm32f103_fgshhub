@@ -11,6 +11,10 @@ void OLED_FanTimeSet(u8 x, u8 y, u32 total_seconds, u32 stop_seconds, u8 twinkle
 void ShowRunTime(u8 x, u8 y);
 //显示当前系统运行时间
 void Show_SysTime(u8 x, u8 y);
-	
+//显示温度
+void ShowTemp(u8 x,u8 y,u8 temp);
+
+
+
 #endif // __UI_COMP_H
 

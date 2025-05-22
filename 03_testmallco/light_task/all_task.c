@@ -25,7 +25,8 @@
 #include "encoder.h"
 
 
-uint16_t fan_cont = 0, bat_lev_cont = 5 , temp = 0; //风扇旋转角度，电量档位，温度
+float temp = 0;
+uint16_t fan_cont = 0, bat_lev_cont = 5 ; //风扇旋转角度，电量档位，温度
 static uint32_t timer_seconds = 0;									//需要运行的时间，s
 bool Time_Task_Run = 0;											//是否开启定时关闭
 float Real_value; 													//ADC获取的值
@@ -79,26 +80,26 @@ void ShowTime_Task(void *arg)
     uint16_t show_time = 0;
 
     if (run_flag == 0) {
-        if (Set_State == 1) {
+        if (Set_State == 2) {
             // 设置状态下未运行，显示当前时间
             timer_seconds = __HAL_TIM_GET_COUNTER(&htim1);
             show_time = timer_seconds;
 						fantimeset.stop_seconds = show_time;
 						fantimeset.show_settime = 1;
-						UI_EnableTwinkle(&fantimeset_element, 1, 300); 
+
         }
 				else{
 					fantimeset.total_seconds = timer_seconds;
 					fantimeset.show_settime = 0;
-					UI_EnableTwinkle(&fantimeset_element, 0, 0); 
+
 				}
     } else {
-        if (Set_State != 1) {
+        if (Set_State != 2) {
             // 正常运行中，显示剩余倒计时
             show_time = (timer_seconds > counter) ? (timer_seconds - counter) : 0;
 						fantimeset.total_seconds = show_time;
 						fantimeset.show_settime = 0;
-						UI_EnableTwinkle(&fantimeset_element, 0, 0); 
+
         }
     }
 }
@@ -107,7 +108,7 @@ void ShowTime_Task(void *arg)
 void ShowBATLev_Task(void *arg)
 {
 	HAL_ADC_Start_IT(&hadc1);
-	
+	float Battery_voltage = 0.0f;
 	static NonBlockingDelay delay;
 
 	if (!delay.active) {
@@ -118,30 +119,24 @@ void ShowBATLev_Task(void *arg)
 	if (!DelayIsExpired(&delay)) {
 			return;
 	}
-	Real_value=(float)(ADC_value)/2048*3.3;
-	printf("The ADC_value is %d",ADC_value);
-	printf("The Real_value is %f\n\n",Real_value); 
+	Real_value = (float)(ADC_value) / 4095.0f * 3.3f;
+	Battery_voltage = Real_value * 2;
+	printf("ADC_value: %d, Real voltage: %.2f V, Battery voltage: %.2f V\n", ADC_value, Real_value, Battery_voltage);
   OLED_ShowPicture(96,0,32,16,BAT_LEVELS[bat_lev_cont],1);
 }
-
-//采集并显示温度
-void ShowTEMP_Task(void *arg)
-{
-	temp = (uint16_t)DS18B20_Get_Temp();
-  OLED_ShowPicture(42,3,16,16,TEMP_ICO,1);
-  OLED_ShowNum(56,2,temp,3,16,1);
-  OLED_ShowPicture(72,4,12,12,TEMP_C,1);
-}
-
 
 int32_t count = 0;
 //运行获取编码器值来切换风扇档位
 void Run_Fan_Task(void)
 {
+	static uint32_t run_fan_task_last_tik = 0;
 	//获取编码器的值，除以12来消抖
-	if(Set_State == 0)
+	if(Set_State == 0 || Set_State == 1)
 	{
-			count += encoder1.last_count;
+		if(HAL_GetTick()-run_fan_task_last_tik>=100)
+		{
+			run_fan_task_last_tik = HAL_GetTick();
+			count = encoder1.current_count;
 			count = count / 12;
 			count %= 4;
 			if(set_fan_mode == 1)
@@ -149,6 +144,7 @@ void Run_Fan_Task(void)
 				set_fan_mode = 0;
 				Set_Fan_State(&fan1,(FanScanState)(count+1));
 			}
+		}
 	}
 	
 		fan1_display.level = count;
@@ -163,4 +159,33 @@ void Run_Standby_Stop_Task(uint16_t time_interval)
 			__HAL_PWR_CLEAR_FLAG(PWR_FLAG_WU);
 			HAL_PWR_EnableWakeUpPin(PWR_WAKEUP_PIN1);
 			HAL_PWR_EnterSTANDBYMode();
+}
+
+
+void Twinkle(void *arg)
+{
+	static uint8_t last_Set_State = 0;
+			if(last_Set_State != Set_State)
+			{
+				last_Set_State = Set_State;
+					switch (Set_State)
+					{
+					case 0:
+								UI_EnableTwinkle(&temp_element, 0, 0); 
+							break;
+					case 1:
+								UI_EnableTwinkle(&fan1_element, 1, 500); 
+							break;
+					case 2:
+								UI_EnableTwinkle(&fan1_element, 0, 0); 
+								UI_EnableTwinkle(&fantimeset_element, 1, 500); 
+							break;
+					case 3:
+								UI_EnableTwinkle(&fantimeset_element, 0, 0);
+								UI_EnableTwinkle(&temp_element, 1, 500); 
+							break;
+					default:
+							break;
+					}
+			}
 }

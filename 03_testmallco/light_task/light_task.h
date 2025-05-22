@@ -4,7 +4,7 @@
 #include "main.h"
 
 
-#define MAX_TASKS 12
+#define MAX_TASKS 18
 
 typedef struct {
     void (*func)(void *);       // 函数指针（带参数）
