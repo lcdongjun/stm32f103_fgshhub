@@ -2,7 +2,7 @@
 #include "oledfont.h"  	 
 #include "spi.h"
 
-uint8_t OLED_GRAM[1024];
+uint8_t OLED_GRAM[2048];
 volatile uint8_t spi_dma_busy = 0;
 
 //反显函数
@@ -105,13 +105,14 @@ void OLED_Refresh(void)
         OLED_Write_Cmd(0x00);         // 列低
         OLED_Write_Cmd(0x10);         // 列高
 
-        OLED_Write_Data_DMA(&OLED_GRAM[page * 128], 128);  // 一页数据
+        OLED_Write_Data_DMA(&OLED_GRAM[(page+4) * 128], 128);  // 一页数据
     }
 }
+
 //清屏函数
 void OLED_Clear(void)
 {
-		for (uint16_t i = 0; i < 1024; i++)
+		for (uint16_t i = 0; i < 2048; i++)
     {
         OLED_GRAM[i] = 0x00; // 清除所有显存
     }
@@ -121,7 +122,7 @@ void OLED_Clear(void)
 
 void OLED_Clear_GRAM(void)
 {
-		for (uint16_t i = 0; i < 1024; i++)
+		for (uint16_t i = 0; i < 2048; i++)
     {
         OLED_GRAM[i] = 0x00; // 清除所有显存
     }
@@ -129,14 +130,14 @@ void OLED_Clear_GRAM(void)
 
 void OLED_Clear_Area(uint8_t x_start, uint8_t y_start, uint8_t width, uint8_t height)
 {
-    if (x_start >= 128 || y_start >= 64 || width == 0 || height == 0)
+    if (x_start >= 128 || y_start >= 128 || width == 0 || height == 0)
         return;
 
     uint8_t x_end = x_start + width;
     uint8_t y_end = y_start + height;
 
     if (x_end > 128) x_end = 128;
-    if (y_end > 64) y_end = 64;
+    if (y_end > 128) y_end = 128;
 
     for (uint8_t y = y_start; y < y_end; y++)
     {
@@ -145,7 +146,7 @@ void OLED_Clear_Area(uint8_t x_start, uint8_t y_start, uint8_t width, uint8_t he
 
         for (uint8_t x = x_start; x < x_end; x++)
         {
-            OLED_GRAM[x + page * 128] &= ~bit_mask;
+            OLED_GRAM[x + (page+4) * 128] &= ~bit_mask;
         }
     }
 }
@@ -156,7 +157,7 @@ void OLED_Clear_Area(uint8_t x_start, uint8_t y_start, uint8_t width, uint8_t he
 //t:1 填充 0,清空	
 void OLED_DrawPoint(u8 x,u8 y,u8 t)
 {
-		if (x > 127 || y > 63) return;  // 防止越界
+		if (x > 127 || y > 127) return;  // 防止越界
 
     uint16_t page = y / 8;
     uint8_t bit_offset = y % 8;

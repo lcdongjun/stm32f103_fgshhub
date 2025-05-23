@@ -130,7 +130,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	
+	uint8_t Slide_flage = 0;
   while (1)
   {
 		DelayCall(Key_Scan_Task, &key1, 5);
@@ -141,9 +141,31 @@ int main(void)
 		
 		DelayCall(ShowTime_Task,(void *)&Time_Task_Run,10);
 		Run_Fan_Task();
-//    DelayCall(ShowBATLev_Task, NULL, 3000);
+    DelayCall(ShowBATLev_Task, NULL, 3000);
+		if(Slide_flage == 0)
+		{
+			fan1_display.ui_offset.offset_y++;
+			temp_display.ui_offset.offset_y++;
+			fantimeset.ui_offset.offset_y++;
+			OLED_Clear_GRAM();
+			if(fan1_display.ui_offset.offset_y>=96)
+			{
+				Slide_flage = 1;
+			}
+		}
+		else
+		{
+			fan1_display.ui_offset.offset_y--;
+			temp_display.ui_offset.offset_y--;
+			fantimeset.ui_offset.offset_y--;
+			OLED_Clear_GRAM();
+			if(fan1_display.ui_offset.offset_y<=-24)
+			{
+				Slide_flage = 0;
+			}
+		}
 		DelayCall(UI_UpdateAll,NULL,0);
-		DelayCall(UI_DrawAll,NULL,16);
+		DelayCall(UI_DrawAll,NULL,0);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

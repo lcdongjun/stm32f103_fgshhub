@@ -38,7 +38,7 @@ void EncoderSpeed_Update(void *arg)
     uint32_t now = HAL_GetTick();
     uint32_t dt = now - enc->last_tick;
 
-    if (dt >= 100) // 每100ms计算一次
+    if (dt >= 100) // 每100ms更新一次
     {
         int16_t delta = enc->current_count - enc->last_count;
 
@@ -46,7 +46,19 @@ void EncoderSpeed_Update(void *arg)
         if (delta > 32767) delta -= 65536;
         else if (delta < -32768) delta += 65536;
 
-        enc->speed = (delta * 1000) / dt; // 速度：tick/s
+        int32_t raw_speed = (delta * 1000) / dt;
+
+        // 存入缓冲区
+        enc->speed_buffer[enc->buffer_index] = raw_speed;
+        enc->buffer_index = (enc->buffer_index + 1) % SPEED_FILTER_WINDOW;
+
+        // 计算滑动平均
+        int64_t sum = 0;
+        for (int i = 0; i < SPEED_FILTER_WINDOW; i++) {
+            sum += enc->speed_buffer[i];
+        }
+        enc->speed = sum / SPEED_FILTER_WINDOW;
+
         enc->last_count = enc->current_count;
         enc->last_tick = now;
     }

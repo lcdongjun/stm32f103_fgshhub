@@ -78,36 +78,50 @@ void ShowTime_Task(void *arg)
 {
     uint8_t run_flag = *(uint8_t *)arg;
     uint16_t show_time = 0;
+		static uint32_t showtime_task_last_tik = 0;
+    if (run_flag == 0)
+		{
+        if (Set_State == 2)
+				{
+						fan1.fan_control_mode = FAN_CTRL_MANUAL;
 
-    if (run_flag == 0) {
-        if (Set_State == 2) {
-            // 设置状态下未运行，显示当前时间
-            timer_seconds = __HAL_TIM_GET_COUNTER(&htim1);
-            show_time = timer_seconds;
-						fantimeset.stop_seconds = show_time;
-						fantimeset.show_settime = 1;
-
-        }
-				else{
-					fantimeset.total_seconds = timer_seconds;
-					fantimeset.show_settime = 0;
-
-				}
-    } else {
-        if (Set_State != 2) {
-            // 正常运行中，显示剩余倒计时
-            show_time = (timer_seconds > counter) ? (timer_seconds - counter) : 0;
-						if(show_time == 1)
+//            timer_seconds = __HAL_TIM_GET_COUNTER(&htim1);
+						if(HAL_GetTick()-showtime_task_last_tik>100)
 						{
-							Time_Task_Run = 0;
-							counter = 0;
-							HAL_TIM_Base_Stop_IT(&htim2);
-							Set_Fan_State(&fan1,FAN_MODE0);
-							
+							timer_seconds += encoder1.speed;
+							show_time = timer_seconds;
+							fantimeset.stop_seconds = show_time;
+							fantimeset.show_settime = 1;
 						}
-						fantimeset.total_seconds = show_time;
-						fantimeset.show_settime = 0;
+        } else
+				{
+            fantimeset.total_seconds = timer_seconds;
+            fantimeset.show_settime = 0;
+        }
+    }
+		else
+		{
+        fan1.fan_control_mode = FAN_CTRL_TIMER;
 
+        if (Set_State != 2)
+				{
+            show_time = (timer_seconds > counter) ? (timer_seconds - counter) : 0;
+
+            if (show_time <= 1)
+						{
+                Time_Task_Run = 0;
+                counter = 0;
+                HAL_TIM_Base_Stop_IT(&htim2);
+                Set_Fan_State(&fan1, FAN_MODE0);
+
+                fan1_display.level = 0;
+                fan1_display.pause = 1;
+                fan1.fan_control_mode = FAN_CTRL_IDLE;
+
+                printf("Fan Stop! \r\n");
+            }
+            fantimeset.total_seconds = show_time;
+            fantimeset.show_settime = 0;
         }
     }
 }
@@ -137,26 +151,27 @@ int32_t count = 0;
 //运行获取编码器值来切换风扇档位
 void Run_Fan_Task(void)
 {
-	static uint32_t run_fan_task_last_tik = 0;
-	//获取编码器的值，除以12来消抖
-	if(Set_State == 1)//Set_State == 0 || 
-	{
-		if(HAL_GetTick()-run_fan_task_last_tik>=100)
-		{
-			run_fan_task_last_tik = HAL_GetTick();
-			count = encoder1.current_count;
-			count = count / 12;
-			count %= 4;
-			if(set_fan_mode == 1)
-			{
-				set_fan_mode = 0;
-				Set_Fan_State(&fan1,(FanScanState)(count+1));
-			}
-		}
-	}
-	
-		fan1_display.level = count;
-		count?(fan1_display.pause=0):(fan1_display.pause=1);
+    static uint32_t run_fan_task_last_tik = 0;
+
+    if ((Set_State == 1 || Set_State == 0) && fan1.fan_control_mode != FAN_CTRL_TIMER) // 不在倒计时运行中
+    {
+        if (HAL_GetTick() - run_fan_task_last_tik >= 100)
+        {
+            run_fan_task_last_tik = HAL_GetTick();
+
+            count = encoder1.current_count;
+            count = count / 12;
+            count %= 4;
+
+            if (set_fan_mode == 1)
+            {
+                set_fan_mode = 0;
+                Set_Fan_State(&fan1, (FanScanState)(count + 1));
+            }
+            fan1_display.level = count;
+            fan1_display.pause = (count == 0);
+        }
+    }
 }
 
 void Run_Standby_Stop_Task(uint16_t time_interval)
@@ -182,15 +197,15 @@ void Twinkle(void *arg)
 								UI_EnableTwinkle(&temp_element, 0, 0); 
 							break;
 					case 1:
-								UI_EnableTwinkle(&fan1_element, 1, 500); 
+								UI_EnableTwinkle(&fan1_element, 1, 400); 
 							break;
 					case 2:
 								UI_EnableTwinkle(&fan1_element, 0, 0); 
-								UI_EnableTwinkle(&fantimeset_element, 1, 500); 
+								UI_EnableTwinkle(&fantimeset_element, 1, 400); 
 							break;
 					case 3:
 								UI_EnableTwinkle(&fantimeset_element, 0, 0);
-								UI_EnableTwinkle(&temp_element, 1, 500); 
+								UI_EnableTwinkle(&temp_element, 1, 400); 
 							break;
 					default:
 							break;

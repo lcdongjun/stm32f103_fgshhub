@@ -50,10 +50,11 @@ void UI_Init(void)
 
 //创建风扇组件
 DisplayData fan1_display = {
-    .level = 1,
-    .frame_index = 0,
-    .x = 10,
+		.ui_offset = {0,32},
+		.x = 10,
     .y = 20,
+    .level = 0,
+    .frame_index = 0,
 		.pause = 0
 };
 
@@ -75,6 +76,7 @@ UIElement fan1_element = {
 DisplayData runtime = {
     .level = 1,
     .frame_index = 0,
+		.ui_offset = {0,32},
     .x = 86,
     .y = 54,
 		.pause = 0
@@ -97,6 +99,7 @@ UIElement runtime_element = {
 DisplayData systime = {
     .level = 1,
     .frame_index = 0,
+		.ui_offset = {0,32},
     .x = 0,
     .y = 0,
 		.pause = 0
@@ -116,6 +119,7 @@ UIElement systime_element = {
 
 //创建设置运行时间的组件
 FanTimeSetData fantimeset = {
+		.ui_offset = {0,32},
 		.x = 10,
 		.y = 42,
     .width = 72,
@@ -136,6 +140,7 @@ UIElement fantimeset_element = {
 
 //创建显示温度组件
 DisplayData temp_display = {
+		.ui_offset = {0,32},
     .x = 42,
     .y = 3,
 		.pause = 0
@@ -160,21 +165,21 @@ UIElement temp_element = {
 void TempDisplayAndSetElement(void *date)
 {
 	DisplayData *temp_display = (DisplayData *)date;
-	ShowTemp(temp_display->x,temp_display->y,temp_display->temp);
+	ShowTemp(temp_display->x+temp_display->ui_offset.offset_x,temp_display->y+temp_display->ui_offset.offset_y,temp_display->temp);
 }
 
 //更新显示和设置温度组件
 void TempDisplayAndSetFrameUpdate(void *arg)
 {
 		DisplayData *temp_display = (DisplayData *)arg;
-		ShowTemp(temp_display->x,temp_display->y,temp_display->temp);
+		ShowTemp(temp_display->x+temp_display->ui_offset.offset_x,temp_display->y+temp_display->ui_offset.offset_y,temp_display->temp);
 }
 
 //注册设置风扇运行时间的显示组件
 void FanTimeSetElement(void *date)
 {
 	FanTimeSetData *fantimeset = (FanTimeSetData *)date;
-	OLED_FanTimeSet(fantimeset->x,fantimeset->y,fantimeset->total_seconds,fantimeset->stop_seconds,fantimeset->show_settime);
+	OLED_FanTimeSet(fantimeset->x+fantimeset->ui_offset.offset_x,fantimeset->y+fantimeset->ui_offset.offset_y,fantimeset->total_seconds,fantimeset->stop_seconds,fantimeset->show_settime);
 }
 //更新设置风扇运行时间的组件
 void FanTimeSetFrameUpdate(void *arg)
@@ -187,27 +192,27 @@ void FanTimeSetFrameUpdate(void *arg)
 void ShowRunTimeElement(void *date)
 {
 	DisplayData *runtime = (DisplayData *)date;
-	ShowRunTime(runtime->x,runtime->y);
+	ShowRunTime(runtime->x+runtime->ui_offset.offset_x,runtime->y+runtime->ui_offset.offset_y);
 }
 
 //更新循环耗时显示组件
 void ShowRunTimeFrameUpdate(void *arg)
 {
     DisplayData *runtime = (DisplayData *)arg;
-		ShowRunTime(runtime->x,runtime->y);
+		ShowRunTime(runtime->x+runtime->ui_offset.offset_x,runtime->y+runtime->ui_offset.offset_y);
 }
 //注册系统运行时间显示组件
 void ShowSysTimeElement(void *date)
 {
 	DisplayData *systime = (DisplayData *)date;
-	Show_SysTime(systime->x,systime->y);
+	Show_SysTime(systime->x+systime->ui_offset.offset_x,systime->y+systime->ui_offset.offset_y);
 }
 
 //注册风扇的组件
 void DrawFanElement(void *data)
 {
     DisplayData *fan = (DisplayData *)data;
-    ShowFanStatus(fan->x, fan->y, fan->level, fan->frame_index);
+    ShowFanStatus(fan->x+fan->ui_offset.offset_x, fan->y+fan->ui_offset.offset_y, fan->level, fan->frame_index);
 }
 
 //更新风扇的组件
@@ -239,7 +244,7 @@ void UI_Setup_All(void)
     UI_Init(); // 清空注册
     UI_Register(&fan1_element);
 		UI_Register(&runtime_element);
-		UI_Register(&systime_element);
+//		UI_Register(&systime_element);
 		UI_Register(&fantimeset_element);
 		UI_Register(&temp_element);
 }

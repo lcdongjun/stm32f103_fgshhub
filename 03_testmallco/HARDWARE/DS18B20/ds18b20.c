@@ -39,7 +39,7 @@ u8 DS18B20_Check(void)
 //返回值：1/0
 u8 DS18B20_Read_Bit(void) 
 {
-	u8 data;
+	u8 data = 0;
 	DS18B20_IO_OUT();   //设置为输出
 	DS18B20_DQ_OUT=0; 
 	delay_us(2);
@@ -145,13 +145,13 @@ float DS18B20_Get_Temp(void)
     tem=TH; //获得高八位
     tem<<=8;    
     tem+=TL;//获得底八位
-    tem=(double)tem*0.625;//转换     
+    tem=(double)tem*0.0625;//转换     
 	if(temp)return tem; //返回温度值
 	else return -tem;    
 }
 
 void	Temp_Scan_Task(void *arg)
 {
-	temp_display.temp = DS18B20_Get_Temp()/10;
+	temp_display.temp = DS18B20_Get_Temp();
 }
 

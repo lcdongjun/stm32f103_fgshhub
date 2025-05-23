@@ -3,6 +3,7 @@
 
 #include "main.h"
 
+#define SPEED_FILTER_WINDOW 5  // 滑动窗口大小
 
 typedef struct {
     TIM_HandleTypeDef *htim;
@@ -13,6 +14,11 @@ typedef struct {
 
     uint32_t last_tick;
     uint16_t ppr;     // 每圈脉冲数
+	
+	
+    int32_t speed_buffer[SPEED_FILTER_WINDOW];
+    uint8_t buffer_index;
+	
 } EncoderWithSpeed;
 
 

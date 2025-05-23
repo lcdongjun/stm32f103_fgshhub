@@ -10,7 +10,6 @@ extern "C" {
 
 void DWT_Init(void);
 void delay_us(unsigned long  us);
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
 
 #ifdef __cplusplus

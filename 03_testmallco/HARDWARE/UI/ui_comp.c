@@ -133,7 +133,7 @@ static uint32_t loop_count = 0;
 static uint64_t total_elapsed_cycles = 0;
 static uint32_t last_tick = 0;
 static	uint32_t start_time = 0;
-
+static	uint32_t avg_us = 0;
 void ShowRunTime(u8 x, u8 y)
 {
 
@@ -141,10 +141,13 @@ void ShowRunTime(u8 x, u8 y)
 	total_elapsed_cycles += elapsed_cycles;
 	loop_count++;
 	uint32_t current_tick = HAL_GetTick();
-	if (current_tick - last_tick >= 1000)
-	{
+		if (current_tick - last_tick >= 1000)
+		{
 			last_tick = current_tick;
-			uint32_t avg_us = (total_elapsed_cycles / loop_count)/SYSClock_MHZ;
+			avg_us = (total_elapsed_cycles / loop_count)/SYSClock_MHZ;
+			total_elapsed_cycles = 0;
+			loop_count = 0;
+		}
 		if(avg_us>10000)
 		{
 			OLED_ShowString(x, y, "T:", 8, 1);
@@ -157,12 +160,7 @@ void ShowRunTime(u8 x, u8 y)
 			OLED_ShowNum(x+12, y, avg_us, 4, 8, 1);
 			OLED_ShowString(x+36, y, "u", 8, 1);
 		}
-
-			total_elapsed_cycles = 0;
-			loop_count = 0;
-	}
 	start_time = DWT->CYCCNT;
-	
 }
 
 //显示当前系统运行时间

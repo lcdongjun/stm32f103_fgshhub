@@ -18,6 +18,12 @@ typedef enum {
     FAN_KEY_WAIT_RELEASE
 } FanKeyState;
 
+typedef enum {
+    FAN_CTRL_IDLE = 0,       // 不运行
+    FAN_CTRL_MANUAL = 1,     // 手动调节模式（Run_Fan_Task 控制）
+    FAN_CTRL_TIMER = 2       // 运行中，倒计时控制
+} FanCtrlMode;
+
 typedef struct {
     FanScanState read_mode;
     FanScanState set_mode;
@@ -31,7 +37,7 @@ typedef struct {
     uint8_t set_tick;
 
     FanKeyState key_state;
-
+		FanCtrlMode fan_control_mode;
     void (*callback)(FanScanState);
 } FanHandle;
 

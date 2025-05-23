@@ -40,10 +40,15 @@ typedef struct {
 	
 } UIElement;
 
+typedef struct {
+    int16_t offset_x;//坐标零点x偏移地址
+    int16_t offset_y;//坐标零点y偏移地址
+} UI_Offset;
 
 typedef struct {
     uint8_t level;         // 档位
     uint8_t frame_index;   // 动画帧序号
+		UI_Offset ui_offset;	 //坐标零点偏移地址
     uint16_t x, y;          // 坐标
 		uint8_t pause;					//是否暂停运行
 		uint32_t last_tick;			//上一次的tick
@@ -51,6 +56,7 @@ typedef struct {
 } DisplayData;
 
 typedef struct {
+		UI_Offset ui_offset;	 //坐标零点偏移地址
     uint16_t x, y;          // 坐标
 		u32 total_seconds;			//倒计时
 		u32 stop_seconds;				//设置的时间
